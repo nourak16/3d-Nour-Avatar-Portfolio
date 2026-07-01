@@ -191,17 +191,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
             </h1>
           </div>
 
-          <div className="absolute top-4 right-6 z-10 flex gap-2">
-            <button
-              onClick={handleExportConfig}
-              className="flex items-center gap-1 bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 rounded-lg px-2.5 py-1 text-[10px] font-semibold text-slate-300 transition-all cursor-pointer shadow-sm active:scale-95 hover:text-white"
-              title="Copy portfolio JSON config data"
-              id="btn-export-split"
-            >
-              <FileCode2 size={12} className={theme.text} />
-              JSON Data
-            </button>
-          </div>
+
 
           {/* 3D Canvas element wrapper */}
           <div className="flex-1 w-full h-full relative z-10">
@@ -508,14 +498,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 {link.label}
               </a>
             ))}
-            <button
-              onClick={handleExportConfig}
-              className="bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-semibold text-slate-300 transition-all active:scale-95 flex items-center gap-1 hover:text-white cursor-pointer"
-              id="btn-export-classic"
-            >
-              <FileCode2 size={12} className={theme.text} />
-              JSON Data
-            </button>
+
           </nav>
         </header>
 
@@ -541,20 +524,13 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
             </p>
 
             <div className="flex gap-4 pt-2">
-              <a
-                href="#classic-contact"
-                className={`px-6 py-2.5 rounded-lg ${theme.accent} ${theme.accentHover} text-slate-950 font-bold text-xs shadow-md transition-all flex items-center gap-1.5`}
-              >
-                <Mail size={13} />
-                Connect with me
-              </a>
-              <button
-                onClick={handleExportConfig}
-                className="px-6 py-2.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 hover:text-white font-bold text-xs border border-white/10 transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <Download size={13} className={theme.text} />
-                Copy JSON Data
-              </button>
+            <a
+              href="#classic-contact"
+              className={`px-6 py-2.5 rounded-lg ${theme.accent} ${theme.accentHover} text-slate-950 font-bold text-xs shadow-md transition-all flex items-center gap-1.5`}
+            >
+              <Mail size={13} />
+              Connect with me
+            </a>
             </div>
           </div>
 
@@ -799,16 +775,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
             <span className="text-[10px] font-mono text-slate-400 hidden sm:block">{data.role}</span>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleExportConfig}
-              className="glass hover:bg-white/[0.08] p-2.5 rounded-2xl text-slate-300 hover:text-white transition-all shadow-lg cursor-pointer active:scale-95"
-              title="Copy portfolio JSON config data"
-              id="btn-export-fullscreen"
-            >
-              <FileCode2 size={15} />
-            </button>
-          </div>
+
         </header>
 
         {/* Dynamic Center Panel HUD (changes based on activeSection) */}

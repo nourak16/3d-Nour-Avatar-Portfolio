@@ -92,6 +92,7 @@ export default function AvatarCanvas({
   // Monitor Canvas Texture and Canvas for scrolling code
   const monitorCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const monitorTextureRef = useRef<THREE.CanvasTexture | null>(null);
+  const monitorTextureBackRef = useRef<THREE.CanvasTexture | null>(null);
 
   // Sync posture to a ref to prevent stale closure inside animate loop
   const postureRef = useRef(posture);
@@ -1076,6 +1077,9 @@ export default function AvatarCanvas({
     if (monitorTextureRef.current) {
       monitorTextureRef.current.needsUpdate = true;
     }
+    if (monitorTextureBackRef.current) {
+      monitorTextureBackRef.current.needsUpdate = true;
+    }
   };
 
   // Reset all bones to their default bind pose
@@ -1404,6 +1408,10 @@ export default function AvatarCanvas({
         monitorTextureRef.current.dispose();
         monitorTextureRef.current = null;
       }
+      if (monitorTextureBackRef.current) {
+        monitorTextureBackRef.current.dispose();
+        monitorTextureBackRef.current = null;
+      }
       monitorCanvasRef.current = null;
       return;
     }
@@ -1577,8 +1585,18 @@ export default function AvatarCanvas({
     const monitorTexture = new THREE.CanvasTexture(monitorCanvas);
     monitorTextureRef.current = monitorTexture;
 
+    // Create back texture (mirrored horizontally so when plane is rotated, text reads left-to-right normally)
+    const monitorTextureBack = monitorTexture.clone();
+    monitorTextureBack.wrapS = THREE.RepeatWrapping;
+    monitorTextureBack.repeat.x = -1;
+    monitorTextureBackRef.current = monitorTextureBack;
+
     const screenMaterial = new THREE.MeshBasicMaterial({
       map: monitorTexture,
+    });
+
+    const screenMaterialBack = new THREE.MeshBasicMaterial({
+      map: monitorTextureBack,
     });
 
     const frameMaterial = new THREE.MeshStandardMaterial({
@@ -1593,15 +1611,21 @@ export default function AvatarCanvas({
     monitorFrame.castShadow = true;
     monitorGroup.add(monitorFrame);
 
-    // Actual monitor screen mesh
+    // Front monitor screen mesh (facing user/camera)
     const monitorScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.70, 0.30), screenMaterial);
-    monitorScreen.position.set(0, 0.26, 0.031); // slightly out
+    monitorScreen.position.set(0, 0.26, 0.031); // slightly out on front face
     monitorGroup.add(monitorScreen);
 
-    // Emissive logo on monitor back
-    const backLogo = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 0.005), themeMaterial);
-    backLogo.position.set(0, 0.26, 0.009);
-    monitorGroup.add(backLogo);
+    // Back monitor screen mesh (facing avatar, rotated 180 degrees)
+    const monitorScreenBack = new THREE.Mesh(new THREE.PlaneGeometry(0.70, 0.30), screenMaterialBack);
+    monitorScreenBack.position.set(0, 0.26, 0.009); // slightly out on back face
+    monitorScreenBack.rotation.y = Math.PI; // Face the avatar (-Z)
+    monitorGroup.add(monitorScreenBack);
+
+    // Emissive logo relocated to the monitor stand pole
+    const standLogo = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.01), themeMaterial);
+    standLogo.position.set(0, 0.12, 0.036);
+    monitorGroup.add(standLogo);
 
     tableSubGroup.add(monitorGroup);
 
