@@ -54,81 +54,98 @@ export const AVATAR_PRESETS: AvatarModelPreset[] = [
 ];
 
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
-  name: "Marcus Vance",
-  role: "Creative technologist & 3D Engineer",
-  tagline: "Bridging the gap between cinematic storytelling and interactive full-stack web applications.",
-  bio: "Hi there! I'm a developer and designer specializing in interactive 3D graphics, WebGL, and robust client-server architectures. My work focuses on creating sensory-rich digital interfaces that feel tactile and engaging.",
-  about: "For the past five years, I have crafted bespoke visual experiences for clients across tech, art, and games. Utilizing tools like Three.js, shaders, and React, I transform concepts into performant, elegant, and interactive software. My process is highly iterative, focusing on visual precision and motion design.",
+  name: "Nour Khalaf Abou El Rouss",
+  role: "Full stack web developer",
+  tagline: "Designing elegant digital experiences where creativity meets performance.",
+  bio: "Hi! I'm Nour, a Full-Stack Web Developer focused on building modern websites and e-commerce experiences. I combine clean design, thoughtful user experiences, and scalable development to create fast, responsive, and engaging products. Whether it's a business website, portfolio, or online store, I enjoy turning ideas into polished digital experiences that people love to use.",
+  about: "I specialize in building modern, responsive websites and web applications using HTML, CSS, JavaScript, and React. On the backend, I work with MySQL and Supabase to create secure, scalable, and data-driven applications. I focus on writing clean, maintainable code while delivering intuitive user experiences and visually polished interfaces.",
   skills: [
-    { id: 'sk-1', name: 'TypeScript & React', proficiency: 95, category: 'Frontend' },
-    { id: 'sk-2', name: 'Three.js & WebGL', proficiency: 90, category: 'Frontend' },
-    { id: 'sk-3', name: 'GLSL / Shader Design', proficiency: 75, category: 'Design' },
-    { id: 'sk-4', name: 'Tailwind CSS', proficiency: 95, category: 'Frontend' },
-    { id: 'sk-5', name: 'Node.js & Express', proficiency: 85, category: 'Backend' },
-    { id: 'sk-6', name: 'Drizzle / PostgreSQL', proficiency: 80, category: 'Backend' },
-    { id: 'sk-7', name: 'Figma & UI Prototyping', proficiency: 88, category: 'Design' },
-    { id: 'sk-8', name: 'Docker & Cloud Deployment', proficiency: 70, category: 'Other' },
+    {
+      id: "sk-1782872109023",
+      name: "HTML5",
+      proficiency: 80,
+      category: "Frontend"
+    },
+    {
+      id: "sk-1782872120555",
+      name: "CSS3",
+      proficiency: 80,
+      category: "Frontend"
+    },
+    {
+      id: "sk-1782872135159",
+      name: "JavaScript",
+      proficiency: 80,
+      category: "Frontend"
+    },
+    {
+      id: "sk-1782872195960",
+      name: "React",
+      proficiency: 50,
+      category: "Frontend"
+    },
+    {
+      id: "sk-1782872218487",
+      name: "Supabase",
+      proficiency: 60,
+      category: "Backend"
+    },
+    {
+      id: "sk-1782872235530",
+      name: "MySQL",
+      proficiency: 80,
+      category: "Backend"
+    },
+    {
+      id: "sk-1782872264967",
+      name: "Responsive Web Design",
+      proficiency: 60,
+      category: "Design"
+    }
   ],
   projects: [
     {
-      id: 'proj-1',
-      title: 'Aether Engine',
-      description: 'A custom hardware-accelerated fluid simulation canvas utilizing GPGPU fragment shaders, built as a React-Three-Fiber package.',
-      category: 'Creative Tech',
-      tags: ['WebGL', 'GLSL', 'React', 'Three.js'],
-      demoUrl: 'https://example.com',
-      githubUrl: 'https://github.com'
-    },
-    {
-      id: 'proj-2',
-      title: 'Helios Analytics Dashboard',
-      description: 'A full-stack performance profiling dashboard mapping multi-region server latency in real-time with d3 coordinate projections.',
-      category: 'Web Dev',
-      tags: ['TypeScript', 'Express', 'D3.js', 'PostgreSQL'],
-      demoUrl: 'https://example.com',
-      githubUrl: 'https://github.com'
-    },
-    {
-      id: 'proj-3',
-      title: 'Quantum Portal Shader',
-      description: 'An interactive interactive visualizer displaying deep space wormhole ripples reacting to real-time micro-microphone inputs.',
-      category: 'Shaders',
-      tags: ['GLSL', 'Vite', 'Three.js', 'Audio WebAPI'],
-      demoUrl: 'https://example.com',
-      githubUrl: 'https://github.com'
+      id: "proj-1782872638671",
+      title: "Floraison de Lynn – Flower Store",
+      description: "A modern and responsive flower store website designed to showcase elegant floral collections with a premium shopping experience. Built with HTML ,CSS ,JAVASCRIPT, the project emphasizes clean UI/UX, smooth interactions, and a mobile-friendly layout while providing an intuitive browsing experience for customers.",
+      category: "Online Store",
+      tags: [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
+      demoUrl: "https://www.floraisondelynn.com/"
     }
   ],
   socials: {
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    twitter: 'https://twitter.com',
-    email: 'marcus.vance@example.com',
-    website: 'https://marcusvance.dev'
+    github: "https://github.com",
+    linkedin: "https://linkedin.com",
+    twitter: "https://twitter.com",
+    email: "nourabouelrouss@gmail.com",
+    website: "https://marcusvance.dev"
   },
-  themeColor: 'emerald',
-  layoutStyle: 'split',
+  themeColor: "emerald",
+  layoutStyle: "classic",
   avatarConfig: {
-    modelUrl: './my-avatar.glb',
-    scale: 1.0,
-    positionY: -0.05,
+    modelUrl: "./my-avatar.glb",
+    scale: 0.9,
+    positionY: -0.25,
     rotationY: 0,
-    rotationSpeed: 0.3,
+    rotationSpeed: 2,
     autoRotate: false,
-    lighting: 'cyberpunk',
-    pedestal: 'cyber',
-    activeAnimation: 'Idle',
-    posture: 'standing',
-    tablePosX: 0,
-    tablePosY: 0,
-    tablePosZ: 0,
-    keyboardPosX: 0,
-    keyboardPosY: 0,
-    keyboardPosZ: 0,
-    mousePosX: 0,
-    mousePosY: 0,
-    mousePosZ: 0,
+    lighting: "studio",
+    pedestal: "glass",
+    activeAnimation: "Armature.001|mixamo.com|Layer0 Retarget",
+    posture: "typing",
+    tablePosX: 0.01,
+    tablePosY: -0.18,
+    keyboardPosX: 0.05,
+    keyboardPosZ: -0.05,
+    tablePosZ: 0.32,
+    keyboardPosY: 0.02,
+    mousePosX: -0.5,
+    chairPosY: -0.26,
     chairPosX: 0,
-    chairPosY: 0,
-    chairPosZ: 0
+    mousePosZ: -0.06
   }
 };

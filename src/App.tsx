@@ -5,43 +5,17 @@ import AvatarCanvas from './components/AvatarCanvas';
 import PortfolioView from './components/PortfolioView';
 
 export default function App() {
-  const [data, setData] = useState<PortfolioData>(() => {
-    const saved = localStorage.getItem('avatar_portfolio_data');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Exclude ephemeral blob URLs from restoring
-        if (parsed?.avatarConfig?.modelUrl?.startsWith('blob:')) {
-          parsed.avatarConfig.modelUrl = INITIAL_PORTFOLIO_DATA.avatarConfig.modelUrl;
-        }
-        // Self-heal legacy absolute path to relative path
-        if (parsed?.avatarConfig?.modelUrl === '/my-avatar.glb') {
-          parsed.avatarConfig.modelUrl = './my-avatar.glb';
-        }
-        return parsed;
-      } catch (e) {
-        return INITIAL_PORTFOLIO_DATA;
-      }
-    }
-    return INITIAL_PORTFOLIO_DATA;
-  });
+  // Directly load your precise customized portfolio data
+  const [data, setData] = useState<PortfolioData>(INITIAL_PORTFOLIO_DATA);
+
+  // Clear any stale local storage from construction phase so it resets for everyone
+  useEffect(() => {
+    localStorage.removeItem('avatar_portfolio_data');
+  }, []);
 
   const [animations, setAnimations] = useState<string[]>([]);
   const [loadStatus, setLoadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [loadProgress, setLoadProgress] = useState(0);
-
-  // Sync state to localStorage
-  useEffect(() => {
-    const toSave = { ...data };
-    // If it's a blob url, replace it with the default modelUrl during save
-    if (toSave.avatarConfig?.modelUrl?.startsWith('blob:')) {
-      toSave.avatarConfig = {
-        ...toSave.avatarConfig,
-        modelUrl: INITIAL_PORTFOLIO_DATA.avatarConfig.modelUrl
-      };
-    }
-    localStorage.setItem('avatar_portfolio_data', JSON.stringify(toSave));
-  }, [data]);
 
   // Stable rendering of the 3D Canvas to pass as a prop to PortfolioView
   // This keeps the DOM canvas structure and orbits intact
