@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-accent-purple: #9d81ff;
+  --color-bg-dark: #050508;
+}
+
+/* Custom classes for Frosted Glass design theme */
+.frosted-bg {
+  background-color: #050508;
+  background-image: 
+    radial-gradient(circle at 80% 20%, #25103d 0%, transparent 45%), 
+    radial-gradient(circle at 20% 80%, #0d1b31 0%, transparent 45%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px !important;
+}
+
+.glass-pill {
+  padding: 6px 16px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+}
+
+.accent-text {
+  color: #9d81ff !important;
+  text-shadow: 0 0 20px rgba(157, 129, 255, 0.4) !important;
+}
+
+.avatar-space {
+  background: radial-gradient(circle at center, rgba(157, 129, 255, 0.15) 0%, transparent 70%) !important;
+}
+
+.project-card {
+  transition: all 0.3s ease !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 16px !important;
+}
+
+.project-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Glass panel enhancements for builder */
+.glass-panel {
+  background: rgba(10, 15, 30, 0.4) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
