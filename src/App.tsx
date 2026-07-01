@@ -14,6 +14,10 @@ export default function App() {
         if (parsed?.avatarConfig?.modelUrl?.startsWith('blob:')) {
           parsed.avatarConfig.modelUrl = INITIAL_PORTFOLIO_DATA.avatarConfig.modelUrl;
         }
+        // Self-heal legacy absolute path to relative path
+        if (parsed?.avatarConfig?.modelUrl === '/my-avatar.glb') {
+          parsed.avatarConfig.modelUrl = './my-avatar.glb';
+        }
         return parsed;
       } catch (e) {
         return INITIAL_PORTFOLIO_DATA;

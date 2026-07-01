@@ -4,7 +4,7 @@ export const AVATAR_PRESETS: AvatarModelPreset[] = [
   {
     id: 'my-avatar',
     name: 'My Custom Avatar',
-    url: '/my-avatar.glb',
+    url: './my-avatar.glb',
     scale: 1.0,
     positionY: -0.05,
     rotationY: 0,
@@ -108,7 +108,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   themeColor: 'emerald',
   layoutStyle: 'split',
   avatarConfig: {
-    modelUrl: '/my-avatar.glb',
+    modelUrl: './my-avatar.glb',
     scale: 1.0,
     positionY: -0.05,
     rotationY: 0,
