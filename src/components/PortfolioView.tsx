@@ -536,17 +536,10 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
           {/* Hero Right 3D Showcase Container */}
           <div className="lg:col-span-6 flex justify-center w-full" id="classic-hero-stage-container">
-            <div className="w-full max-w-md aspect-[4/5] glass relative overflow-hidden shadow-2xl">
+            <div className="w-full max-w-md aspect-[4/5] relative">
               {/* Avatar ambient space background */}
-              <div className="avatar-space absolute inset-0 rounded-full scale-125 pointer-events-none z-0" />
+              <div className="avatar-space absolute inset-0 rounded-full scale-125 pointer-events-none z-0 opacity-40" />
 
-              <div className="absolute inset-x-0 top-0 bg-white/[0.01] px-5 py-3 border-b border-white/5 z-10 flex items-center justify-between pointer-events-none">
-                <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold tracking-wider">3D Hologram stage</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[8px] font-mono text-slate-400 font-semibold uppercase">Active render</span>
-                </span>
-              </div>
               <div className="w-full h-full relative z-10">
                 {canvasElement}
               </div>

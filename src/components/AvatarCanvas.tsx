@@ -1924,21 +1924,7 @@ export default function AvatarCanvas({
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(10,15,29,0.85))] -z-10" />
       )}
 
-      {/* Orbit Help Indicator */}
-      <div className="absolute bottom-4 left-4 pointer-events-none flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-slate-800 text-xs text-slate-400 select-none shadow-md">
-        <Sparkles size={13} className="text-emerald-400 animate-pulse" />
-        <span>Left-click & Drag to rotate • Scroll to zoom</span>
-      </div>
 
-      {/* Reset Camera button */}
-      <button
-        onClick={resetCamera}
-        className="absolute bottom-4 right-4 bg-slate-900/85 hover:bg-slate-800 hover:text-white border border-slate-800 p-2 rounded-full text-slate-400 transition-all shadow-md active:scale-95 group"
-        title="Reset Camera View"
-        id="btn-reset-camera"
-      >
-        <RotateCcw size={15} className="group-hover:rotate-45 transition-transform" />
-      </button>
 
       {/* Loader UI overlay */}
       {status === 'loading' && (
