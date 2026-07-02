@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PortfolioData } from '../types';
 import { 
   Github, 
@@ -33,6 +33,9 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   const [contactMsg, setContactMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Web3Forms direct integration key for silent background transmission
+  const web3FormsKey = 'b3f65a12-ef7d-4590-9362-21b4b375b5fb';
 
   // Theme helper
   const getThemeStyles = (color: string) => {
@@ -133,21 +136,50 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
   const theme = getThemeStyles(data.themeColor);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName || !contactEmail || !contactMsg) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: web3FormsKey,
+          name: contactName,
+          email: contactEmail,
+          message: contactMsg,
+          from_name: 'Portfolio Contact Form',
+          subject: `New Portfolio Message from ${contactName}`
+        })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setIsSubmitted(true);
+        setContactName('');
+        setContactEmail('');
+        setContactMsg('');
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 6000);
+      } else {
+        alert(result.message || 'Failed to dispatch message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Could not reach the dispatch server. Please check your connection and try again.');
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setContactName('');
-      setContactEmail('');
-      setContactMsg('');
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 5000);
-    }, 1500);
+    }
+  };
+
+  const renderDeliverySettings = () => {
+    return null;
   };
 
   const handleExportConfig = () => {
@@ -446,20 +478,22 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <label htmlFor="contact-form-msg" className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Message / Query</label>
-                      <textarea
-                        id="contact-form-msg"
-                        required
-                        rows={4}
-                        value={contactMsg}
-                        onChange={(e) => setContactMsg(e.target.value)}
-                        placeholder="Describe your project, contract details, or consultation request..."
-                        className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <label htmlFor="contact-form-msg" className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Message / Query</label>
+                    <textarea
+                      id="contact-form-msg"
+                      required
+                      rows={4}
+                      value={contactMsg}
+                      onChange={(e) => setContactMsg(e.target.value)}
+                      placeholder="Describe your project, contract details, or consultation request..."
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                    />
+                  </div>
 
-                    <button
+                  {renderDeliverySettings()}
+
+                  <button
                       type="submit"
                       disabled={isSubmitting}
                       className={`w-full ${theme.accent} ${theme.accentHover} text-slate-950 font-bold py-2.5 rounded-lg transition-all text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md`}
@@ -727,6 +761,8 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       />
                     </div>
 
+                    {renderDeliverySettings()}
+
                     <button
                       type="submit"
                       disabled={isSubmitting}
@@ -930,6 +966,9 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       placeholder="Detail your request or general networking message..."
                       className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all resize-none"
                     />
+                    
+                    {renderDeliverySettings()}
+
                     <button
                       type="submit"
                       disabled={isSubmitting}

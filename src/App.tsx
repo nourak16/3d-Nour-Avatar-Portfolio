@@ -77,8 +77,15 @@ export default function App() {
 
   return (
     <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden font-sans" id="application-root">
-      {/* Portfolio View exactly as the final public user interacts with it */}
-      <PortfolioView data={data} canvasElement={canvasElement} />
+      {/* Portfolio View animated entrance once preloader is done */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={!showPreloader ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        className="w-full min-h-screen flex flex-col"
+      >
+        <PortfolioView data={data} canvasElement={canvasElement} />
+      </motion.div>
 
       {/* Full-screen preloader cover: blocks portfolio interaction until 3D avatar has fully loaded */}
       <AnimatePresence>
