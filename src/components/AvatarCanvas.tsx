@@ -1928,16 +1928,12 @@ export default function AvatarCanvas({
 
       {/* Loader UI overlay */}
       {status === 'loading' && (
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4 transition-all duration-300">
-          <div className="relative flex items-center justify-center">
-            <Loader2 className="w-12 h-12 text-emerald-400 animate-spin" />
-            <span className="absolute font-mono text-xs font-semibold text-emerald-400 select-none">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300">
+          <div className="flex flex-col items-center gap-2 bg-slate-950/40 backdrop-blur-md px-4 py-3 rounded-xl border border-white/10 shadow-xl pointer-events-auto">
+            <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
+            <span className="font-mono text-[10px] font-semibold text-emerald-300 select-none tracking-wider">
               {progress}%
             </span>
-          </div>
-          <div className="text-center">
-            <h3 className="text-slate-200 font-medium tracking-wide">Loading 3D Avatar GLB</h3>
-            <p className="text-xs text-slate-400 mt-1 max-w-xs px-4">Downloading and compiling meshes, materials, and skeletal textures...</p>
           </div>
         </div>
       )}
