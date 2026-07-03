@@ -40,20 +40,20 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // Theme helper
   const getThemeStyles = (color: string) => {
     switch (color) {
-      case 'emerald':
+      case 'sky':
         return {
-          text: 'text-emerald-400',
-          hoverText: 'hover:text-emerald-300',
-          border: 'border-emerald-500/20',
-          borderHover: 'hover:border-emerald-500/40',
-          bg: 'bg-emerald-500/10',
-          badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-          accent: 'bg-emerald-500',
-          accentHover: 'hover:bg-emerald-600',
-          accentRing: 'focus:ring-emerald-500',
-          gradientText: 'from-emerald-400 to-teal-400',
-          shadow: 'shadow-emerald-500/10',
-          glow: 'bg-emerald-500/5',
+          text: 'text-sky-400',
+          hoverText: 'hover:text-sky-300',
+          border: 'border-sky-500/20',
+          borderHover: 'hover:border-sky-500/40',
+          bg: 'bg-sky-500/10',
+          badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+          accent: 'bg-sky-500',
+          accentHover: 'hover:bg-sky-600',
+          accentRing: 'focus:ring-sky-500',
+          gradientText: 'from-sky-400 to-cyan-400',
+          shadow: 'shadow-sky-500/10',
+          glow: 'bg-sky-500/5',
         };
       case 'indigo':
         return {
@@ -115,21 +115,21 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
           shadow: 'shadow-rose-500/10',
           glow: 'bg-rose-500/5',
         };
-      case 'sky':
+      case 'emerald':
       default:
         return {
-          text: 'text-sky-400',
-          hoverText: 'hover:text-sky-300',
-          border: 'border-sky-500/20',
-          borderHover: 'hover:border-sky-500/40',
-          bg: 'bg-sky-500/10',
-          badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-          accent: 'bg-sky-500',
-          accentHover: 'hover:bg-sky-600',
-          accentRing: 'focus:ring-sky-500',
-          gradientText: 'from-sky-400 to-cyan-400',
-          shadow: 'shadow-sky-500/10',
-          glow: 'bg-sky-500/5',
+          text: 'text-emerald-400',
+          hoverText: 'hover:text-emerald-300',
+          border: 'border-emerald-500/20',
+          borderHover: 'hover:border-emerald-500/40',
+          bg: 'bg-emerald-500/10',
+          badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+          accent: 'bg-emerald-500',
+          accentHover: 'hover:bg-emerald-600',
+          accentRing: 'focus:ring-emerald-500',
+          gradientText: 'from-emerald-400 to-teal-400',
+          shadow: 'shadow-emerald-500/10',
+          glow: 'bg-emerald-500/5',
         };
     }
   };
@@ -241,7 +241,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
         {/* Scrolling Right Content Column */}
         <div className="flex-1 overflow-y-auto bg-transparent" id="split-content-column">
-          <header className="sticky top-0 z-20 bg-[#050508]/40 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 md:px-12 flex justify-between items-center" id="split-header">
+          <header className="sticky top-0 z-20 bg-[#020604]/40 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 md:px-12 flex justify-between items-center" id="split-header">
             <span className="text-xs font-mono text-slate-400">{data.role}</span>
             <nav className="hidden sm:flex items-center gap-6">
               {navLinks.map(link => (
@@ -350,17 +350,14 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                           <Layers size={13} className={theme.text} />
                           {cat} Engineering
                         </h4>
-                        <div className="space-y-4">
+                        <div className="flex flex-wrap gap-2">
                           {sks.map(skill => (
-                            <div key={skill.id} className="space-y-1.5">
-                              <div className="flex justify-between text-xs font-medium">
-                                <span className="text-slate-200">{skill.name}</span>
-                                <span className="font-mono text-slate-400">{skill.proficiency}%</span>
-                              </div>
-                              <div className="w-full bg-white/[0.05] h-1.5 rounded-full overflow-hidden">
-                                <div className={`${theme.accent} h-full rounded-full transition-all duration-1000`} style={{ width: `${skill.proficiency}%` }} />
-                              </div>
-                            </div>
+                            <span
+                              key={skill.id}
+                              className="text-xs font-mono bg-white/[0.03] border border-white/5 text-slate-200 px-2.5 py-1 rounded-lg hover:border-white/10 hover:bg-white/[0.05] transition-all"
+                            >
+                              {skill.name}
+                            </span>
                           ))}
                         </div>
                       </div>
@@ -517,7 +514,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
     return (
       <div className="min-h-screen frosted-bg text-slate-100 flex flex-col font-sans relative overflow-x-hidden" id="portfolio-layout-classic">
         {/* Navigation Bar */}
-        <header className="sticky top-0 z-30 bg-[#050508]/40 backdrop-blur-md border-b border-white/5 px-6 py-4 flex justify-between items-center max-w-7xl w-full mx-auto" id="classic-header">
+        <header className="sticky top-0 z-30 bg-[#020604]/40 backdrop-blur-md border-b border-white/5 px-6 py-4 flex justify-between items-center max-w-7xl w-full mx-auto" id="classic-header">
           <h1 className="text-sm font-mono font-extrabold uppercase tracking-widest flex items-center gap-1.5">
             <Terminal size={14} className={theme.text} />
             {data.name}
@@ -604,34 +601,34 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">02 / capabilities</span>
                   <h3 className="text-2xl font-bold text-white leading-tight">Expertise & Skillsets</h3>
                 </div>
-                <span className="text-xs text-slate-400 font-sans">Self-declared proficiency score mapping</span>
+                <span className="text-xs text-slate-400 font-sans">Core technological stack and frameworks</span>
               </div>
 
               {data.skills.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No skills listed yet.</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {data.skills.map(skill => (
-                    <div
-                      key={skill.id}
-                      className="glass project-card p-5 rounded-2xl relative group"
-                    >
-                      <span className="text-[8px] font-mono text-slate-300 bg-white/[0.05] px-2 py-0.5 rounded border border-white/10 uppercase tracking-widest absolute top-5 right-5">
-                        {skill.category}
-                      </span>
-                      <h4 className="text-sm font-bold text-slate-100 group-hover:text-white mt-1 pr-14 truncate">{skill.name}</h4>
-                      
-                      <div className="mt-4 space-y-1.5">
-                        <div className="flex justify-between text-[10px] text-slate-500">
-                          <span>Confidence Level</span>
-                          <span className="font-mono">{skill.proficiency}%</span>
-                        </div>
-                        <div className="w-full bg-white/[0.05] h-1 rounded-full overflow-hidden">
-                          <div className={`${theme.accent} h-full rounded-full transition-all`} style={{ width: `${skill.proficiency}%` }} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {Object.entries(categorizedSkills).map(([cat, sks]) => {
+                    if (sks.length === 0) return null;
+                    return (
+                      <div key={cat} className="glass p-6 rounded-2xl space-y-4">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 font-mono flex items-center gap-2 border-b border-white/5 pb-2">
+                          <span className={`w-1.5 h-1.5 rounded-full ${theme.accent}`} />
+                          {cat}
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {sks.map(skill => (
+                            <span
+                              key={skill.id}
+                              className="text-xs bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-200 px-3 py-1.5 rounded-xl transition-all font-mono"
+                            >
+                              {skill.name}
+                            </span>
+                          ))}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -873,17 +870,17 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 {data.skills.length === 0 ? (
                   <p className="text-xs text-slate-500 italic">No skills listed.</p>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3 max-h-56 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-850">
+                  <div className="flex flex-wrap gap-2 max-h-56 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-850">
                     {data.skills.map(skill => (
-                      <div key={skill.id} className="glass-panel p-2.5 rounded-xl space-y-1">
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-slate-200 font-semibold truncate pr-1">{skill.name}</span>
-                          <span className="font-mono text-[9px] text-slate-300 shrink-0">{skill.proficiency}%</span>
-                        </div>
-                        <div className="w-full bg-white/[0.05] h-1 rounded-full overflow-hidden">
-                          <div className={`${theme.accent} h-full rounded-full`} style={{ width: `${skill.proficiency}%` }} />
-                        </div>
-                      </div>
+                      <span
+                        key={skill.id}
+                        className="text-xs bg-white/[0.03] border border-white/5 text-slate-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 font-mono"
+                      >
+                        <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                          {skill.category.substring(0, 3)}:
+                        </span>
+                        <span className="font-medium text-slate-100">{skill.name}</span>
+                      </span>
                     ))}
                   </div>
                 )}

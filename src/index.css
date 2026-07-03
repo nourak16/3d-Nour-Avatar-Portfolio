@@ -3,16 +3,16 @@
 @theme {
   --color-glass-bg: rgba(255, 255, 255, 0.03);
   --color-glass-border: rgba(255, 255, 255, 0.08);
-  --color-accent-purple: #9d81ff;
-  --color-bg-dark: #050508;
+  --color-accent-emerald: #10b981;
+  --color-bg-dark: #020604;
 }
 
 /* Custom classes for Frosted Glass design theme */
 .frosted-bg {
-  background-color: #050508;
+  background-color: #020604;
   background-image: 
-    radial-gradient(circle at 80% 20%, #25103d 0%, transparent 45%), 
-    radial-gradient(circle at 20% 80%, #0d1b31 0%, transparent 45%);
+    radial-gradient(circle at 80% 20%, #042c16 0%, transparent 45%), 
+    radial-gradient(circle at 20% 80%, #01170c 0%, transparent 45%);
 }
 
 .glass {
@@ -34,12 +34,12 @@
 }
 
 .accent-text {
-  color: #9d81ff !important;
-  text-shadow: 0 0 20px rgba(157, 129, 255, 0.4) !important;
+  color: #10b981 !important;
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
 }
 
 .avatar-space {
-  background: radial-gradient(circle at center, rgba(157, 129, 255, 0.15) 0%, transparent 70%) !important;
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.15) 0%, transparent 70%) !important;
 }
 
 .project-card {

@@ -183,7 +183,7 @@ export default function ControlPanel({
   };
 
   const themeColors = [
-    { name: 'Emerald', value: 'emerald', bg: 'bg-emerald-500', border: 'border-emerald-500' },
+    { name: 'Emerald (Matrix Tech)', value: 'emerald', bg: 'bg-emerald-500', border: 'border-emerald-500' },
     { name: 'Indigo', value: 'indigo', bg: 'bg-indigo-500', border: 'border-indigo-500' },
     { name: 'Violet', value: 'violet', bg: 'bg-violet-500', border: 'border-violet-500' },
     { name: 'Amber', value: 'amber', bg: 'bg-amber-500', border: 'border-amber-500' },

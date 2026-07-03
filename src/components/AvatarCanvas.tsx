@@ -15,6 +15,7 @@ interface AvatarCanvasProps {
   lighting: LightingPreset;
   pedestal: PedestalStyle;
   activeAnimation: string;
+  themeColor?: string;
   posture?: 'standing' | 'typing';
   tablePosX?: number;
   tablePosY?: number;
@@ -42,6 +43,7 @@ export default function AvatarCanvas({
   lighting,
   pedestal,
   activeAnimation,
+  themeColor = 'emerald',
   posture = 'standing',
   tablePosX = 0,
   tablePosY = 0,
@@ -137,11 +139,26 @@ export default function AvatarCanvas({
   useEffect(() => { chairPosYRef.current = chairPosY; }, [chairPosY]);
   useEffect(() => { chairPosZRef.current = chairPosZ; }, [chairPosZ]);
 
+  const lightingRef = useRef(lighting);
+  useEffect(() => { lightingRef.current = lighting; }, [lighting]);
+
+  const themeColorRef = useRef(themeColor);
+  useEffect(() => { themeColorRef.current = themeColor; }, [themeColor]);
+
+  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
+  const particlesRef = useRef<THREE.Points | null>(null);
+
+  const scrollPercentRef = useRef(0);
+  const smoothedScrollRef = useRef(0);
+
   // UI state for error and loading
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [usingFallback, setUsingFallback] = useState(false);
+
+  const usingFallbackRef = useRef(usingFallback);
+  useEffect(() => { usingFallbackRef.current = usingFallback; }, [usingFallback]);
 
   // 1. Initial Setup
   useEffect(() => {
@@ -181,6 +198,94 @@ export default function AvatarCanvas({
     controls.target.set(0, 0.9, 0);
     controlsRef.current = controls;
 
+    // Create subtle, animated luxury particle system in the background
+    const particleCount = 200;
+    const particleGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const initialY = new Float32Array(particleCount);
+    const speeds = new Float32Array(particleCount);
+    const sways = new Float32Array(particleCount);
+    const phases = new Float32Array(particleCount);
+
+    for (let i = 0; i < particleCount; i++) {
+      // Position particles beautifully in a volume around the viewport background
+      positions[i * 3] = (Math.random() - 0.5) * 6; // X from -3 to 3
+      initialY[i] = Math.random() * 4 - 0.5; // Y from -0.5 to 3.5
+      positions[i * 3 + 1] = initialY[i];
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 6 - 1.5; // Z from -4.5 to 1.5
+
+      speeds[i] = 0.05 + Math.random() * 0.1; // Slow atmospheric rising
+      sways[i] = 0.04 + Math.random() * 0.12; // Sway factor
+      phases[i] = Math.random() * Math.PI * 2; // Phase offsets
+    }
+
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Custom circular glow texture for premium particle look
+    const createParticleTexture = () => {
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 16;
+      pCanvas.height = 16;
+      const pCtx = pCanvas.getContext('2d');
+      if (pCtx) {
+        const grad = pCtx.createRadialGradient(8, 8, 0, 8, 8, 8);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        grad.addColorStop(0.3, 'rgba(230, 200, 255, 0.8)');
+        grad.addColorStop(1, 'rgba(120, 80, 255, 0)');
+        pCtx.fillStyle = grad;
+        pCtx.fillRect(0, 0, 16, 16);
+      }
+      return new THREE.CanvasTexture(pCanvas);
+    };
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.06,
+      map: createParticleTexture(),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    const particles = new THREE.Points(particleGeometry, particlesMaterial);
+    scene.add(particles);
+    particlesRef.current = particles;
+
+    // Window mouse move listener for parallax and rotation reactivity
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        mouseRef.current.targetX = x;
+        mouseRef.current.targetY = y;
+      }
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+
+    // Scroll tracking for interactive, scroll-responsive avatar motion
+    const handleScroll = () => {
+      let percent = 0;
+      const splitCol = document.getElementById('split-content-column');
+      if (splitCol) {
+        const scrollTop = splitCol.scrollTop;
+        const scrollHeight = splitCol.scrollHeight - splitCol.clientHeight;
+        if (scrollHeight > 0) {
+          percent = scrollTop / scrollHeight;
+        }
+      } else {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollHeight > 0) {
+          percent = scrollTop / scrollHeight;
+        }
+      }
+      scrollPercentRef.current = percent;
+    };
+
+    // Add scroll tracking with capture: true to intercept internal split-column scrolling
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+
     // Resize observer
     const handleResize = (entries: ResizeObserverEntry[]) => {
       if (!entries || entries.length === 0) return;
@@ -214,8 +319,13 @@ export default function AvatarCanvas({
       const deltaTime = clock.getDelta();
       const elapsedTime = clock.getElapsedTime();
 
-      // Update controls
+      // Smoothly interpolate scroll depth with lerp
+      smoothedScrollRef.current += (scrollPercentRef.current - smoothedScrollRef.current) * 0.05;
+
+      // Update controls with scroll-linked target panning
       if (controlsRef.current) {
+        const baseTargetY = usingFallbackRef.current ? 1.0 : 0.9;
+        controlsRef.current.target.y = baseTargetY - (smoothedScrollRef.current * 0.25);
         controlsRef.current.update();
       }
 
@@ -224,13 +334,85 @@ export default function AvatarCanvas({
         mixerRef.current.update(deltaTime);
       }
 
+      // Update background luxury particle system
+      if (particlesRef.current) {
+        const geom = particlesRef.current.geometry;
+        const posAttr = geom.getAttribute('position') as THREE.BufferAttribute;
+        const positionsArr = posAttr.array as Float32Array;
+
+        for (let i = 0; i < particleCount; i++) {
+          // Atmospheric slow rise
+          initialY[i] += speeds[i] * deltaTime;
+          if (initialY[i] > 3.5) {
+            initialY[i] = -0.5;
+          }
+          positionsArr[i * 3 + 1] = initialY[i];
+
+          // Slow horizontal swaying effect using sine wave
+          const sway = Math.sin(elapsedTime * 1.0 + phases[i]) * sways[i];
+          // Sways on X
+          positionsArr[i * 3] += (sway * 0.02);
+        }
+        posAttr.needsUpdate = true;
+
+        // Smooth mouse coords easing
+        mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.05;
+        mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.05;
+
+        // Elegant parallax rotation & translation
+        particlesRef.current.rotation.y = mouseRef.current.x * 0.15;
+        particlesRef.current.rotation.x = -mouseRef.current.y * 0.1;
+        particlesRef.current.position.x = mouseRef.current.x * 0.25;
+        particlesRef.current.position.y = mouseRef.current.y * 0.15;
+
+        // Dynamic interpolation of color to match active theme & lighting preset
+        let targetColor = new THREE.Color(0xd6bdff); // Default Slate / Purple
+        const activeTheme = themeColorRef.current;
+        
+        if (activeTheme === 'emerald') {
+          targetColor.setHex(0x05ff85); // Vibrant matrix glowing green
+        } else if (activeTheme === 'indigo') {
+          targetColor.setHex(0x6366f1);
+        } else if (activeTheme === 'violet') {
+          targetColor.setHex(0xa78bfa);
+        } else if (activeTheme === 'amber') {
+          targetColor.setHex(0xf59e0b);
+        } else if (activeTheme === 'rose') {
+          targetColor.setHex(0xf43f5e);
+        } else if (activeTheme === 'sky') {
+          targetColor.setHex(0x0ea5e9);
+        }
+
+        // Apply slight modifiers if using specific non-studio lighting presets
+        const currentLighting = lightingRef.current;
+        if (currentLighting === 'neon' && activeTheme !== 'emerald') {
+          targetColor.setHex(0xff33aa); // neon hot pink
+        } else if (currentLighting === 'cyberpunk' && activeTheme !== 'emerald') {
+          targetColor.setHex(0x00aaff); // techno cyan
+        } else if (currentLighting === 'warm' && activeTheme !== 'emerald') {
+          targetColor.setHex(0xffaa44); // luxury gold
+        } else if (currentLighting === 'studio' && activeTheme !== 'emerald') {
+          targetColor.setHex(0xaabbcc); // clean silver
+        }
+        (particlesRef.current.material as THREE.PointsMaterial).color.lerp(targetColor, 0.05);
+      }
+
       // Procedural animations if NO active actions are running, or to add micro-movements
       if (modelRef.current) {
         const model = modelRef.current;
+        const scrollOffsetValue = smoothedScrollRef.current;
+
+        // Compute subtle, responsive scroll-linked tilts and shifts
+        const scrollTiltX = -scrollOffsetValue * 0.12; // tilt forward slightly on scroll
+        const scrollTiltZ = scrollOffsetValue * 0.04;   // subtle roll/tilt sideways
+        const scrollFloatY = scrollOffsetValue * 0.15;   // float upwards slightly
 
         // Auto rotation
         if (autoRotate && postureRef.current !== 'typing') {
           model.rotation.y += rotationSpeed * deltaTime;
+        } else if (!autoRotate && postureRef.current !== 'typing') {
+          // Subtle rotation turning towards the right content panel as you scroll down
+          model.rotation.y = rotationYRef.current + (scrollOffsetValue * 0.6);
         }
 
         if (postureRef.current === 'typing') {
@@ -435,8 +617,10 @@ export default function AvatarCanvas({
             if (upperArmR) { upperArmR.rotation.set(0, 0, -0.1); upperArmR.position.set(0.28, 1.1, 0); }
             if (lowerArmR) { lowerArmR.rotation.set(-0.2, 0, 0); lowerArmR.position.set(0.3, 0.85, 0.05); }
 
-            // Subtle float / hover movement
-            model.position.y = positionY + Math.sin(elapsedTime * 2.0) * 0.04;
+            // Subtle float / hover movement with scroll-responsive vertical offset and tilts
+            model.position.y = positionY + Math.sin(elapsedTime * 2.0) * 0.04 + scrollFloatY;
+            model.rotation.x = scrollTiltX;
+            model.rotation.z = scrollTiltZ;
 
             // Gently rotate the head group
             const head = model.getObjectByName('headGroup');
@@ -450,16 +634,16 @@ export default function AvatarCanvas({
               currentActionRef.current && currentActionRef.current.isRunning();
 
             if (!hasActiveSkeletalAnimation) {
-              // Subtle breathing sway and rise
-              model.position.y = positionY + Math.sin(elapsedTime * 1.5) * 0.025;
-              // Very gentle yaw/roll oscillation
-              model.rotation.z = Math.sin(elapsedTime * 0.8) * 0.015;
-              model.rotation.x = Math.sin(elapsedTime * 0.5) * 0.01;
+              // Subtle breathing sway and rise with scroll-responsive float
+              model.position.y = positionY + Math.sin(elapsedTime * 1.5) * 0.025 + scrollFloatY;
+              // Very gentle yaw/roll oscillation + scroll-linked tilts
+              model.rotation.z = Math.sin(elapsedTime * 0.8) * 0.015 + scrollTiltZ;
+              model.rotation.x = Math.sin(elapsedTime * 0.5) * 0.01 + scrollTiltX;
             } else {
-              // Maintain static positions when animations control skeletal joints
-              model.position.y = positionY;
-              model.rotation.z = 0;
-              model.rotation.x = 0;
+              // Maintain static positions when animations control skeletal joints + scroll offsets
+              model.position.y = positionY + scrollFloatY;
+              model.rotation.z = scrollTiltZ;
+              model.rotation.x = scrollTiltX;
             }
           }
         }
@@ -538,6 +722,15 @@ export default function AvatarCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+
+      if (particles) {
+        scene.remove(particles);
+        particles.geometry.dispose();
+        particlesMaterial.dispose();
+      }
+
       if (rendererRef.current) {
         rendererRef.current.dispose();
       }

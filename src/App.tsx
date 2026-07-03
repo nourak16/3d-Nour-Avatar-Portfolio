@@ -55,6 +55,7 @@ export default function App() {
       pedestal={data.avatarConfig.pedestal}
       activeAnimation={data.avatarConfig.activeAnimation}
       posture={data.avatarConfig.posture || 'standing'}
+      themeColor={data.themeColor}
       tablePosX={data.avatarConfig.tablePosX ?? 0}
       tablePosY={data.avatarConfig.tablePosY ?? 0}
       tablePosZ={data.avatarConfig.tablePosZ ?? 0}
