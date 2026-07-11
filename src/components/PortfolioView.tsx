@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { PortfolioData } from '../types';
+import { Header } from './Header';
 import { 
-  Github, 
   Linkedin, 
   Twitter, 
   Mail, 
@@ -11,19 +12,177 @@ import {
   Terminal, 
   Send, 
   CheckCircle2, 
+  Instagram, 
+  Github, 
   Download, 
   Menu, 
   X,
   Sparkles,
   Info,
   Layers,
-  FileCode2
+  FileCode2,
+  AlertCircle,
+  Cpu,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowRight
 } from 'lucide-react';
 
 interface PortfolioViewProps {
   data: PortfolioData;
   canvasElement: React.ReactNode;
 }
+
+const GlowingDivider = () => (
+  <div className="relative py-6 my-2 flex items-center justify-center w-full overflow-hidden" id="glowing-section-divider">
+    <div className="flex-1 h-[1px]" style={{ backgroundImage: 'linear-gradient(to right, transparent, rgba(var(--theme-color-rgb, 79, 70, 229), 0.15))' }} />
+    <div className="relative mx-6 flex items-center justify-center shrink-0">
+      <div className="absolute h-[2px] w-56 blur-[4px]" style={{ backgroundImage: 'linear-gradient(to right, transparent, rgba(var(--theme-color-rgb, 79, 70, 229), 0.2), transparent)' }} />
+      <div className="absolute h-[1px] w-40" style={{ backgroundImage: 'linear-gradient(to right, transparent, rgba(var(--theme-color-rgb, 79, 70, 229), 0.4), transparent)' }} />
+      <div className="absolute h-[1px] w-16 bg-gradient-to-r from-transparent via-white to-transparent" style={{ filter: 'drop-shadow(0 0 4px var(--theme-accent-color, #4f46e5))' }} />
+      <div className="w-1.5 h-1.5 rounded-full animate-pulse z-10" style={{ borderColor: 'rgba(var(--theme-color-rgb, 79, 70, 229), 0.5)', borderWidth: '1px', boxShadow: '0 0 8px var(--theme-accent-color, #4f46e5)', backgroundColor: 'var(--theme-accent-color, #4f46e5)' }} />
+    </div>
+    <div className="flex-1 h-[1px]" style={{ backgroundImage: 'linear-gradient(to left, transparent, rgba(var(--theme-color-rgb, 79, 70, 229), 0.15))' }} />
+  </div>
+);
+
+interface CaseStudySections {
+  summary: string;
+  problem?: string;
+  approach?: string;
+  impact?: string;
+}
+
+const parseCaseStudy = (desc: string): CaseStudySections => {
+  const sections: CaseStudySections = {
+    summary: '',
+  };
+
+  // Extract sections based on bold markers
+  const problemRegex = /(?:\*\*Problem:\*\*|\*\*The Problem:\*\*|Problem:)\s*([^*]+?)(?=\s*(?:\*\*(?:Approach|Impact|Result):\*\*|Approach:|Impact:|Result:)|$)/i;
+  const approachRegex = /(?:\*\*Approach:\*\*|\*\*The Approach:\*\*|Approach:)\s*([^*]+?)(?=\s*(?:\*\*(?:Problem|Impact|Result):\*\*|Problem:|Impact:|Result:)|$)/i;
+  const impactRegex = /(?:\*\*Impact:\*\*|\*\*The Result:\*\*|\*\*Result:\*\*|Impact:|Result:)\s*([^*]+?)(?=\s*(?:\*\*(?:Problem|Approach):\*\*|Problem:|Approach:)|$)/i;
+
+  const problemMatch = desc.match(problemRegex);
+  const approachMatch = desc.match(approachRegex);
+  const impactMatch = desc.match(impactRegex);
+
+  if (problemMatch || approachMatch || impactMatch) {
+    sections.problem = problemMatch?.[1]?.trim();
+    sections.approach = approachMatch?.[1]?.trim();
+    sections.impact = impactMatch?.[1]?.trim();
+    
+    // Find first occurrence of any marker to separate summary
+    const markers = [
+      desc.indexOf('**Problem:**'),
+      desc.indexOf('Problem:'),
+      desc.indexOf('**The Problem:**'),
+      desc.indexOf('**Approach:**'),
+      desc.indexOf('Approach:'),
+      desc.indexOf('**The Approach:**'),
+      desc.indexOf('**Impact:**'),
+      desc.indexOf('Impact:'),
+      desc.indexOf('**Result:**'),
+      desc.indexOf('Result:')
+    ].filter(idx => idx !== -1);
+    
+    const firstIndex = markers.length > 0 ? Math.min(...markers) : -1;
+    
+    if (firstIndex > 0) {
+      sections.summary = desc.substring(0, firstIndex).trim();
+    } else {
+      sections.summary = '';
+    }
+  } else {
+    sections.summary = desc;
+  }
+
+  return sections;
+};
+
+interface ProjectCaseStudyProps {
+  description: string;
+  compact?: boolean;
+}
+
+const ProjectCaseStudy = ({ description, compact = false }: ProjectCaseStudyProps) => {
+  const sections = parseCaseStudy(description);
+  const hasSections = sections.problem || sections.approach || sections.impact;
+
+  if (!hasSections) {
+    return <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4">{description}</p>;
+  }
+
+  if (compact) {
+    return (
+      <div className="space-y-2 mb-3">
+        {sections.summary && (
+          <p className="text-slate-300 text-xs leading-relaxed">{sections.summary}</p>
+        )}
+        <div className="space-y-1.5 pt-1.5 text-[11px] border-t border-white/5">
+          {sections.problem && (
+            <div className="flex items-start gap-1.5 text-slate-400">
+              <AlertCircle size={11} className="text-rose-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed"><strong className="text-slate-200">Problem:</strong> {sections.problem}</span>
+            </div>
+          )}
+          {sections.approach && (
+            <div className="flex items-start gap-1.5 text-slate-400">
+              <Cpu size={11} className="text-sky-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed"><strong className="text-slate-200">Approach:</strong> {sections.approach}</span>
+            </div>
+          )}
+          {sections.impact && (
+            <div className="flex items-start gap-1.5 text-slate-400">
+              <TrendingUp size={11} className="text-emerald-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed"><strong className="text-slate-200">Impact:</strong> {sections.impact}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 mb-4">
+      {sections.summary && (
+        <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{sections.summary}</p>
+      )}
+      
+      <div className="grid grid-cols-1 gap-3 pt-1 border-t border-white/5">
+        {sections.problem && (
+          <div className="bg-white/[0.01] border border-white/5 hover:border-rose-500/10 p-3.5 rounded-xl transition-all group/case">
+            <div className="flex items-center gap-1.5 text-slate-300 mb-1">
+              <AlertCircle size={13} className="text-rose-400 group-hover/case:scale-110 transition-transform" />
+              <span className="text-[11px] font-bold font-mono tracking-wider uppercase text-rose-300">The Problem</span>
+            </div>
+            <p className="text-slate-400 text-xs leading-relaxed">{sections.problem}</p>
+          </div>
+        )}
+        
+        {sections.approach && (
+          <div className="bg-white/[0.01] border border-white/5 hover:border-sky-500/10 p-3.5 rounded-xl transition-all group/case">
+            <div className="flex items-center gap-1.5 text-slate-300 mb-1">
+              <Cpu size={13} className="text-sky-400 group-hover/case:scale-110 transition-transform" />
+              <span className="text-[11px] font-bold font-mono tracking-wider uppercase text-sky-300">The Architecture</span>
+            </div>
+            <p className="text-slate-400 text-xs leading-relaxed">{sections.approach}</p>
+          </div>
+        )}
+        
+        {sections.impact && (
+          <div className="bg-white/[0.01] border border-white/5 hover:border-emerald-500/10 p-3.5 rounded-xl transition-all group/case">
+            <div className="flex items-center gap-1.5 text-slate-300 mb-1">
+              <TrendingUp size={13} className="text-emerald-400 group-hover/case:scale-110 transition-transform" />
+              <span className="text-[11px] font-bold font-mono tracking-wider uppercase text-emerald-300">The Result & Impact</span>
+            </div>
+            <p className="text-slate-400 text-xs leading-relaxed">{sections.impact}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default function PortfolioView({ data, canvasElement }: PortfolioViewProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,6 +192,42 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   const [contactMsg, setContactMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Intersection Observer scrollspy to update active section on scroll
+  useEffect(() => {
+    if (data.layoutStyle === 'fullscreen') return;
+
+    const sections = ['home', 'about', 'skills', 'projects', 'contact'];
+    
+    const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idParts = entry.target.id.split('-');
+          const sectionId = idParts[idParts.length - 1];
+          setActiveSection(sectionId as any);
+        }
+      });
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -60% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+    sections.forEach(sec => {
+      const el = document.getElementById(`${data.layoutStyle}-${sec}`);
+      if (el) {
+        observer.observe(el);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [data.layoutStyle]);
 
   // Web3Forms direct integration key for silent background transmission
   const web3FormsKey = 'b3f65a12-ef7d-4590-9362-21b4b375b5fb';
@@ -44,14 +239,14 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
         return {
           text: 'text-sky-400',
           hoverText: 'hover:text-sky-300',
-          border: 'border-sky-500/20',
-          borderHover: 'hover:border-sky-500/40',
-          bg: 'bg-sky-500/10',
-          badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+          border: 'border-sky-500/10',
+          borderHover: 'hover:border-sky-500/25',
+          bg: 'bg-sky-500/5',
+          badge: 'bg-sky-500/10 text-sky-300 border-sky-500/20',
           accent: 'bg-sky-500',
-          accentHover: 'hover:bg-sky-600',
+          accentHover: 'hover:bg-sky-400',
           accentRing: 'focus:ring-sky-500',
-          gradientText: 'from-sky-400 to-cyan-400',
+          gradientText: 'from-sky-400 to-cyan-300',
           shadow: 'shadow-sky-500/10',
           glow: 'bg-sky-500/5',
         };
@@ -59,44 +254,44 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
         return {
           text: 'text-indigo-400',
           hoverText: 'hover:text-indigo-300',
-          border: 'border-indigo-500/20',
-          borderHover: 'hover:border-indigo-500/40',
-          bg: 'bg-indigo-500/10',
-          badge: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+          border: 'border-indigo-500/10',
+          borderHover: 'hover:border-indigo-500/25',
+          bg: 'bg-indigo-500/5',
+          badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
           accent: 'bg-indigo-500',
-          accentHover: 'hover:bg-indigo-600',
+          accentHover: 'hover:bg-indigo-400',
           accentRing: 'focus:ring-indigo-500',
-          gradientText: 'from-indigo-400 to-blue-400',
+          gradientText: 'from-indigo-400 to-violet-300',
           shadow: 'shadow-indigo-500/10',
           glow: 'bg-indigo-500/5',
         };
       case 'violet':
         return {
-          text: 'text-[#9d81ff]',
-          hoverText: 'hover:text-[#b29eff]',
-          border: 'border-[#9d81ff]/20',
-          borderHover: 'hover:border-[#9d81ff]/40',
-          bg: 'bg-[#9d81ff]/10',
-          badge: 'bg-[#9d81ff]/10 text-[#9d81ff] border-[#9d81ff]/20',
-          accent: 'bg-[#9d81ff]',
-          accentHover: 'hover:bg-[#b29eff]',
-          accentRing: 'focus:ring-[#9d81ff]',
-          gradientText: 'from-[#9d81ff] to-purple-400',
-          shadow: 'shadow-[#9d81ff]/10',
-          glow: 'bg-[#9d81ff]/5',
+          text: 'text-violet-400',
+          hoverText: 'hover:text-violet-300',
+          border: 'border-violet-500/10',
+          borderHover: 'hover:border-violet-500/25',
+          bg: 'bg-violet-500/5',
+          badge: 'bg-violet-500/10 text-violet-300 border-violet-500/20',
+          accent: 'bg-violet-500',
+          accentHover: 'hover:bg-violet-400',
+          accentRing: 'focus:ring-violet-500',
+          gradientText: 'from-violet-400 to-purple-300',
+          shadow: 'shadow-violet-500/10',
+          glow: 'bg-violet-500/5',
         };
       case 'amber':
         return {
           text: 'text-amber-400',
           hoverText: 'hover:text-amber-300',
-          border: 'border-amber-500/20',
-          borderHover: 'hover:border-amber-500/40',
-          bg: 'bg-amber-500/10',
-          badge: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+          border: 'border-amber-500/10',
+          borderHover: 'hover:border-amber-500/25',
+          bg: 'bg-amber-500/5',
+          badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
           accent: 'bg-amber-500',
-          accentHover: 'hover:bg-amber-600',
+          accentHover: 'hover:bg-amber-400',
           accentRing: 'focus:ring-amber-500',
-          gradientText: 'from-amber-400 to-orange-400',
+          gradientText: 'from-amber-400 to-orange-300',
           shadow: 'shadow-amber-500/10',
           glow: 'bg-amber-500/5',
         };
@@ -104,37 +299,106 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
         return {
           text: 'text-rose-400',
           hoverText: 'hover:text-rose-300',
-          border: 'border-rose-500/20',
-          borderHover: 'hover:border-rose-500/40',
-          bg: 'bg-rose-500/10',
-          badge: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+          border: 'border-rose-500/10',
+          borderHover: 'hover:border-rose-500/25',
+          bg: 'bg-rose-500/5',
+          badge: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
           accent: 'bg-rose-500',
-          accentHover: 'hover:bg-rose-600',
+          accentHover: 'hover:bg-rose-400',
           accentRing: 'focus:ring-rose-500',
-          gradientText: 'from-rose-400 to-pink-400',
+          gradientText: 'from-rose-400 to-pink-300',
           shadow: 'shadow-rose-500/10',
           glow: 'bg-rose-500/5',
         };
       case 'emerald':
-      default:
         return {
           text: 'text-emerald-400',
           hoverText: 'hover:text-emerald-300',
-          border: 'border-emerald-500/20',
-          borderHover: 'hover:border-emerald-500/40',
-          bg: 'bg-emerald-500/10',
-          badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+          border: 'border-emerald-500/10',
+          borderHover: 'hover:border-emerald-500/25',
+          bg: 'bg-emerald-500/5',
+          badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
           accent: 'bg-emerald-500',
-          accentHover: 'hover:bg-emerald-600',
+          accentHover: 'hover:bg-emerald-400',
           accentRing: 'focus:ring-emerald-500',
-          gradientText: 'from-emerald-400 to-teal-400',
+          gradientText: 'from-emerald-400 to-teal-300',
           shadow: 'shadow-emerald-500/10',
           glow: 'bg-emerald-500/5',
+        };
+      default:
+        return {
+          text: 'text-indigo-400',
+          hoverText: 'hover:text-indigo-300',
+          border: 'border-indigo-500/10',
+          borderHover: 'hover:border-indigo-500/25',
+          bg: 'bg-indigo-500/5',
+          badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+          accent: 'bg-indigo-500',
+          accentHover: 'hover:bg-indigo-400',
+          accentRing: 'focus:ring-indigo-500',
+          gradientText: 'from-indigo-400 to-violet-300',
+          shadow: 'shadow-indigo-500/10',
+          glow: 'bg-indigo-500/5',
         };
     }
   };
 
   const theme = getThemeStyles(data.themeColor);
+
+  // Helper to map theme name to RGB triple
+  const getThemeColorRgb = (color: string) => {
+    switch (color) {
+      case 'sky': return '56, 189, 248';
+      case 'violet': return '167, 139, 250';
+      case 'amber': return '251, 191, 36';
+      case 'rose': return '251, 113, 133';
+      case 'emerald': return '52, 211, 153';
+      case 'indigo':
+      default: return '129, 140, 248';
+    }
+  };
+
+  // Helper to map theme name to hex color
+  const getThemeColorHex = (color: string) => {
+    switch (color) {
+      case 'sky': return '#38bdf8';
+      case 'violet': return '#a78bfa';
+      case 'amber': return '#fbbf24';
+      case 'rose': return '#fb7185';
+      case 'emerald': return '#34d399';
+      case 'indigo':
+      default: return '#818cf8';
+    }
+  };
+
+  // Helper to map theme name to background radial gradient
+  const getThemeBackgroundStyles = (color: string) => {
+    switch (color) {
+      case 'sky':
+        return 'radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 60%)';
+      case 'violet':
+        return 'radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.1) 0%, transparent 60%)';
+      case 'amber':
+        return 'radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.12) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 60%)';
+      case 'rose':
+        return 'radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.15) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(251, 113, 133, 0.1) 0%, transparent 60%)';
+      case 'emerald':
+        return 'radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(52, 211, 153, 0.08) 0%, transparent 60%)';
+      case 'indigo':
+      default:
+        return 'radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(129, 140, 248, 0.1) 0%, transparent 60%)';
+    }
+  };
+
+  const rgbVal = getThemeColorRgb(data.themeColor);
+  const hexVal = getThemeColorHex(data.themeColor);
+  const glowVal = getThemeBackgroundStyles(data.themeColor);
+
+  const cssVariables = {
+    '--theme-color-rgb': rgbVal,
+    '--theme-accent-color': hexVal,
+    '--theme-bg-glow': glowVal,
+  } as React.CSSProperties;
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,18 +473,21 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // ==================== LAYOUT A: SPLIT SCREEN STAGE (DEFAULT) ====================
   if (data.layoutStyle === 'split') {
     return (
-      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col md:flex-row font-sans relative" id="portfolio-layout-split">
+      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col md:flex-row font-sans relative" id="portfolio-layout-split" style={cssVariables}>
         {/* Fixed Left Canvas Column */}
         <div className="w-full md:w-[45%] h-[400px] md:h-screen md:sticky md:top-0 bg-white/[0.01] border-b md:border-b-0 md:border-r border-white/5 flex flex-col relative overflow-hidden" id="split-stage-column">
           {/* Avatar ambient space background */}
           <div className="avatar-space absolute inset-0 rounded-full scale-110 pointer-events-none z-0" />
 
           {/* Header overlay */}
-          <div className="absolute top-4 left-6 z-10 pointer-events-none">
-            <h1 className="text-sm font-mono tracking-widest font-bold uppercase text-slate-200 flex items-center gap-1.5">
-              <Terminal size={14} className={theme.text} />
-              {data.name.split(' ')[0]}.3D
-            </h1>
+          <div className="absolute top-5 left-6 z-10">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-bold tracking-tight text-slate-800 font-sans">{data.name}</span>
+              <div className="flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                <span className="text-[10px] text-slate-500 font-medium tracking-wide font-sans">Interactive Portrait</span>
+              </div>
+            </div>
           </div>
 
 
@@ -231,34 +498,34 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
           </div>
 
           {/* Footer visual metadata */}
-          <div className="absolute bottom-4 left-6 pointer-events-none z-10 hidden md:block">
-            <div className="flex flex-col gap-0.5 font-mono text-[9px] text-slate-500">
-              <span>MODEL: GLTF_LOADER_PRO</span>
-              <span>LIGHTING: {data.avatarConfig.lighting.toUpperCase()}</span>
+          <div className="absolute bottom-5 left-6 pointer-events-none z-10 hidden md:block">
+            <div className="flex flex-col gap-0.5 font-sans text-[10px] text-slate-400">
+              <span className="font-semibold text-slate-600">3D Control</span>
+              <span>Drag to rotate · Scroll to zoom</span>
             </div>
           </div>
         </div>
 
         {/* Scrolling Right Content Column */}
         <div className="flex-1 overflow-y-auto bg-transparent" id="split-content-column">
-          <header className="sticky top-0 z-20 bg-[#020604]/40 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 md:px-12 flex justify-between items-center" id="split-header">
-            <span className="text-xs font-mono text-slate-400">{data.role}</span>
-            <nav className="hidden sm:flex items-center gap-6">
-              {navLinks.map(link => (
-                <a
-                  key={link.id}
-                  href={`#split-${link.id}`}
-                  className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider font-sans"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </header>
+          <Header
+            layoutStyle="split"
+            name={data.name}
+            activeSection={activeSection}
+            onNavigate={setActiveSection}
+            socials={data.socials}
+          />
 
           <main className="px-6 py-12 md:p-16 space-y-24 max-w-4xl mx-auto" id="split-sections-container">
             {/* Section: Home / Intro */}
-            <section id="split-home" className="space-y-6 pt-6">
+            <motion.section
+              id="split-home"
+              className="space-y-6 pt-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-3">
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${theme.badge} uppercase tracking-wider`}>
                   <Sparkles size={11} />
@@ -278,16 +545,6 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
               {/* Social row */}
               <div className="flex flex-wrap gap-3 pt-2">
-                {data.socials.github && (
-                  <a
-                    href={data.socials.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
-                  >
-                    <Github size={18} />
-                  </a>
-                )}
                 {data.socials.linkedin && (
                   <a
                     href={data.socials.linkedin}
@@ -317,10 +574,18 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </a>
                 )}
               </div>
-            </section>
+            </motion.section>
 
             {/* Section: About Me */}
-            <section id="split-about" className="space-y-6 pt-6 border-t border-white/5">
+            <GlowingDivider />
+            <motion.section
+              id="split-about"
+              className="space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-2">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">01 / Profile Biography</span>
                 <h3 className="text-2xl font-bold text-white">My Creative Origin</h3>
@@ -329,13 +594,21 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 <div className={`absolute top-0 right-0 w-32 h-32 rounded-full ${theme.glow} blur-3xl`} />
                 <p>{data.about}</p>
               </div>
-            </section>
+            </motion.section>
 
             {/* Section: Technical Skills */}
-            <section id="split-skills" className="space-y-8 pt-6 border-t border-white/5">
+            <GlowingDivider />
+            <motion.section
+              id="split-skills"
+              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-2">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">02 / Technical Stack</span>
-                <h3 className="text-2xl font-bold text-white">Engineering Capabilities</h3>
+                <h3 className="text-2xl font-bold text-white">Development Capabilities</h3>
               </div>
 
               {data.skills.length === 0 ? (
@@ -348,7 +621,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       <div key={cat} className="space-y-4 glass p-5 rounded-2xl">
                         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2 border-b border-white/5 pb-2">
                           <Layers size={13} className={theme.text} />
-                          {cat} Engineering
+                          {cat} Development
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {sks.map(skill => (
@@ -365,73 +638,184 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   })}
                 </div>
               )}
-            </section>
+            </motion.section>
 
             {/* Section: Portfolio Projects */}
-            <section id="split-projects" className="space-y-8 pt-6 border-t border-white/5">
+            <GlowingDivider />
+            <motion.section
+              id="split-projects"
+              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-2">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">03 / Selected Works</span>
-                <h3 className="text-2xl font-bold text-white">Engineered Systems</h3>
+                <h3 className="text-2xl font-bold text-white">Featured Projects</h3>
               </div>
 
               {data.projects.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No project cards configured yet.</p>
               ) : (
-                <div className="grid grid-cols-1 gap-6">
-                  {data.projects.map(proj => (
-                    <div
-                      key={proj.id}
-                      className="glass project-card p-6 rounded-2xl relative overflow-hidden group hover:shadow-xl"
-                    >
-                      <div className={`absolute top-0 right-0 w-24 h-24 rounded-full ${theme.glow} blur-2xl group-hover:bg-opacity-20 transition-all`} />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4 mb-4">
-                        <div>
-                          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500">{proj.category}</span>
-                          <h4 className="text-lg font-bold text-slate-100 mt-0.5 group-hover:text-white transition-colors">{proj.title}</h4>
-                        </div>
-                        <div className="flex gap-2">
-                          {proj.githubUrl && (
-                            <a
-                              href={proj.githubUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 rounded-lg bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/[0.1] transition-colors border border-white/10"
-                              title="View Code on Github"
-                            >
-                              <Github size={14} />
-                            </a>
-                          )}
-                          {proj.demoUrl && (
-                            <a
-                              href={proj.demoUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 rounded-lg bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/[0.1] transition-colors border border-white/10 flex items-center gap-1 text-[10px]"
-                            >
-                              <span>Demo</span>
-                              <ExternalLink size={11} />
-                            </a>
-                          )}
-                        </div>
-                      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" id="portfolio-split-projects-grid">
+                  {data.projects.map((proj, index) => {
+                    const sections = parseCaseStudy(proj.description);
+                    const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                    
+                    return (
+                      <motion.div
+                        key={proj.id}
+                        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        viewport={{ once: true, margin: "-80px" }}
+                        transition={{ 
+                          duration: 0.65, 
+                          delay: index * 0.12, 
+                          ease: [0.16, 1, 0.3, 1] 
+                        }}
+                        className="glass project-card rounded-2xl relative overflow-hidden group hover:shadow-2xl hover:border-white/10 transition-all duration-500 border border-white/5 flex flex-col justify-between"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
+                        }}
+                      >
+                        {/* Thumbnail Container */}
+                        <div className="h-44 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
+                          {proj.image ? (
+                            <div className="w-full h-full relative overflow-hidden">
+                              <img 
+                                src={proj.image} 
+                                alt={proj.title} 
+                                referrerPolicy="no-referrer" 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                            </div>
+                          ) : (
+                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-4 group-hover:from-slate-900/70 group-hover:to-zinc-800/40 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                              {/* Browser bar mockup */}
+                              <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                                <div className="flex gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
+                                  <span className="w-2 h-2 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
+                                </div>
+                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-2.5 py-0.5 rounded-full border border-white/5 max-w-[140px] truncate tracking-wider font-medium">
+                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
+                                </span>
+                                <div className="w-3" />
+                              </div>
 
-                      <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4">{proj.description}</p>
-                      
-                      <div className="flex flex-wrap gap-1.5">
-                        {proj.tags.map(tag => (
-                          <span key={tag} className="text-[9px] font-mono text-slate-300 bg-white/[0.05] px-2 py-0.5 rounded border border-white/10">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                              {/* Center preview visualization */}
+                              <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
+                                <div className={`absolute w-20 h-20 rounded-full ${theme.glow} blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
+                                
+                                <div className="relative z-10 text-center space-y-1.5">
+                                  <span className="text-sm font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
+                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
+                                  </span>
+                                  <div className="flex items-center gap-1.5 justify-center">
+                                    {proj.tags.slice(0, 2).map((t) => (
+                                      <span key={t} className="text-[7.5px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-1.5 py-0.5 rounded tracking-wide font-medium">
+                                        {t}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="p-6 flex-1 flex flex-col justify-between gap-5 relative z-10">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
+                                {proj.category || 'Featured Work'}
+                              </span>
+                            </div>
+                            <h4 className="text-lg font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug">
+                              {proj.title}
+                            </h4>
+                            <p className="text-slate-300 text-xs leading-relaxed font-sans font-light line-clamp-3">
+                              {shortBrief}
+                            </p>
+                          </div>
+
+                          <div className="space-y-4 pt-4 border-t border-white/5">
+                            {/* Tech Stack Tags */}
+                            <div className="space-y-2">
+                              <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
+                                Technologies Used:
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {proj.tags.map(tag => {
+                                  let cleanTag = tag;
+                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
+                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
+                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
+                                  return (
+                                    <span
+                                      key={tag}
+                                      className={`text-[9px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
+                                      style={{
+                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
+                                      }}
+                                    >
+                                      {cleanTag}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* View Project Links Button Dock */}
+                            <div className="flex items-center gap-3 pt-2">
+                              {proj.demoUrl && (
+                                <a
+                                  href={proj.demoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <span>Live Demo</span>
+                                  <ExternalLink size={13} />
+                                </a>
+                              )}
+                              
+                              {proj.githubUrl && (
+                                <a
+                                  href={proj.githubUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <Github size={13} />
+                                  <span>Repository</span>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
-            </section>
+            </motion.section>
 
             {/* Section: Contact Form */}
-            <section id="split-contact" className="space-y-6 pt-6 border-t border-white/5 pb-16">
+            <GlowingDivider />
+            <motion.section
+              id="split-contact"
+              className="space-y-6 pb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-2">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">04 / Get In Touch</span>
                 <h3 className="text-2xl font-bold text-white">Connect & Collaborate</h3>
@@ -458,7 +842,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                           value={contactName}
                           onChange={(e) => setContactName(e.target.value)}
                           placeholder="Alice Carter"
-                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
                         />
                       </div>
                       <div className="space-y-1">
@@ -470,7 +854,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                           value={contactEmail}
                           onChange={(e) => setContactEmail(e.target.value)}
                           placeholder="alice@example.com"
-                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
                         />
                       </div>
                     </div>
@@ -484,7 +868,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       value={contactMsg}
                       onChange={(e) => setContactMsg(e.target.value)}
                       placeholder="Describe your project, contract details, or consultation request..."
-                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
                     />
                   </div>
 
@@ -502,8 +886,79 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </form>
                 )}
               </div>
-            </section>
+            </motion.section>
           </main>
+          
+          <div className="px-6 md:px-16 max-w-4xl mx-auto">
+            <footer className="w-full border-t border-white/5 pt-12 pb-16 mt-12" id="portfolio-split-footer">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1">
+                  <span className="text-sm font-bold text-white tracking-tight">{data.name}</span>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{data.role}</span>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  {data.socials.linkedin && (
+                    <a
+                      href={data.socials.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="LinkedIn"
+                    >
+                      <Linkedin size={16} />
+                    </a>
+                  )}
+                  {data.socials.instagram && (
+                    <a
+                      href={data.socials.instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Instagram"
+                    >
+                      <Instagram size={16} />
+                    </a>
+                  )}
+                  {data.socials.github && (
+                    <a
+                      href={data.socials.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="GitHub"
+                    >
+                      <Github size={16} />
+                    </a>
+                  )}
+                  {data.socials.twitter && (
+                    <a
+                      href={data.socials.twitter}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Twitter"
+                    >
+                      <Twitter size={16} />
+                    </a>
+                  )}
+                  {data.socials.email && (
+                    <a
+                      href={`mailto:${data.socials.email}`}
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Email"
+                    >
+                      <Mail size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
+                <span>© 2026 Nour Khalaf Abou El Rouss. All rights reserved.</span>
+              </div>
+            </footer>
+          </div>
         </div>
       </div>
     );
@@ -512,29 +967,25 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // ==================== LAYOUT B: STANDARD SCROLLING / CLASSIC VIEW ====================
   if (data.layoutStyle === 'classic') {
     return (
-      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col font-sans relative overflow-x-hidden" id="portfolio-layout-classic">
+      <div className="h-screen overflow-y-auto frosted-bg text-slate-100 flex flex-col font-sans relative overflow-x-hidden scroll-smooth" id="portfolio-layout-classic" style={cssVariables}>
         {/* Navigation Bar */}
-        <header className="sticky top-0 z-30 bg-[#020604]/40 backdrop-blur-md border-b border-white/5 px-6 py-4 flex justify-between items-center max-w-7xl w-full mx-auto" id="classic-header">
-          <h1 className="text-sm font-mono font-extrabold uppercase tracking-widest flex items-center gap-1.5">
-            <Terminal size={14} className={theme.text} />
-            {data.name}
-          </h1>
-          <nav className="hidden sm:flex items-center gap-6">
-            {navLinks.map(link => (
-              <a
-                key={link.id}
-                href={`#classic-${link.id}`}
-                className="text-xs font-semibold text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-mono"
-              >
-                {link.label}
-              </a>
-            ))}
-
-          </nav>
-        </header>
+        <Header
+          layoutStyle="classic"
+          name={data.name}
+          activeSection={activeSection}
+          onNavigate={setActiveSection}
+          socials={data.socials}
+        />
 
         {/* Hero Section with Showcase Viewport inside */}
-        <section id="classic-home" className="px-6 py-12 md:py-20 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <motion.section
+          id="classic-home"
+          className="px-6 py-12 md:py-20 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           {/* Hero left text */}
           <div className="lg:col-span-6 space-y-6">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${theme.badge} uppercase tracking-wider`}>
@@ -576,14 +1027,21 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Outer contents */}
         <div className="bg-transparent border-t border-white/5 py-20 w-full" id="classic-scrolling-content-wrapper">
           <div className="max-w-7xl mx-auto px-6 space-y-24">
             
             {/* About Section */}
-            <section id="classic-about" className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+            <motion.section
+              id="classic-about"
+              className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="md:col-span-4 space-y-2">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">01 / Biography</span>
                 <h3 className="text-2xl font-bold text-white leading-tight">About {data.name.split(' ')[0]}</h3>
@@ -592,10 +1050,18 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 <div className={`absolute -top-12 -right-12 w-48 h-48 rounded-full ${theme.glow} blur-3xl`} />
                 <p>{data.about}</p>
               </div>
-            </section>
+            </motion.section>
 
             {/* Skills Section */}
-            <section id="classic-skills" className="space-y-8">
+            <GlowingDivider />
+            <motion.section
+              id="classic-skills"
+              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-white/5 pb-4">
                 <div className="space-y-1">
                   <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">02 / capabilities</span>
@@ -631,77 +1097,330 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   })}
                 </div>
               )}
-            </section>
+            </motion.section>
 
             {/* Projects Section */}
-            <section id="classic-projects" className="space-y-8">
+            <GlowingDivider />
+            <motion.section
+              id="classic-projects"
+              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-1 border-b border-white/5 pb-4">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">03 / Works Gallery</span>
-                <h3 className="text-2xl font-bold text-white leading-tight">Featured Engineering Accomplishments</h3>
+                <h3 className="text-2xl font-bold text-white leading-tight">Featured Project Showcases</h3>
               </div>
 
               {data.projects.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No project cards configured.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {data.projects.map(proj => (
-                    <div
-                      key={proj.id}
-                      className="glass project-card p-6 rounded-2xl flex flex-col justify-between h-72 hover:shadow-xl relative overflow-hidden group"
-                    >
-                      <div className={`absolute top-0 right-0 w-20 h-20 rounded-full ${theme.glow} blur-2xl group-hover:opacity-60 transition-all`} />
-                      <div>
-                        <div className="flex justify-between items-start gap-3">
-                          <span className="text-[9px] font-mono text-slate-300 bg-white/[0.05] px-2 py-0.5 rounded border border-white/10 uppercase">
-                            {proj.category}
-                          </span>
-                          <div className="flex gap-1.5 shrink-0">
-                            {proj.githubUrl && (
-                              <a
-                                href={proj.githubUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-slate-400 hover:text-white transition-colors"
-                              >
-                                <Github size={14} />
-                              </a>
-                            )}
-                            {proj.demoUrl && (
-                              <a
-                                href={proj.demoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-slate-400 hover:text-white transition-colors"
-                              >
-                                <ExternalLink size={14} />
-                              </a>
-                            )}
+              ) : data.projects.length === 1 ? (
+                <div className="flex justify-center w-full">
+                  {data.projects.map((proj, index) => {
+                    const sections = parseCaseStudy(proj.description);
+                    const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                    
+                    return (
+                      <motion.div
+                        key={proj.id}
+                        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        viewport={{ once: true, margin: "-80px" }}
+                        transition={{ 
+                          duration: 0.65, 
+                          delay: index * 0.12, 
+                          ease: [0.16, 1, 0.3, 1] 
+                        }}
+                        className="glass project-card rounded-2xl w-full max-w-2xl flex flex-col justify-between hover:shadow-2xl hover:border-white/10 transition-all duration-500 relative overflow-hidden group border border-white/5"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
+                        }}
+                      >
+                        {/* Thumbnail Container */}
+                        <div className="h-56 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
+                          {proj.image ? (
+                            <div className="w-full h-full relative overflow-hidden">
+                              <img 
+                                src={proj.image} 
+                                alt={proj.title} 
+                                referrerPolicy="no-referrer" 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                            </div>
+                          ) : (
+                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-5 group-hover:from-slate-900/70 group-hover:to-zinc-800/40 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                              {/* Browser bar mockup */}
+                              <div className="flex items-center justify-between border-b border-white/[0.04] pb-2.5">
+                                <div className="flex gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
+                                  <span className="w-2 h-2 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
+                                </div>
+                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-3 py-0.5 rounded-full border border-white/5 max-w-[160px] truncate tracking-wider font-medium">
+                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
+                                </span>
+                                <div className="w-3" />
+                              </div>
+
+                              {/* Center preview visualization */}
+                              <div className="flex-1 flex flex-col items-center justify-center relative mt-2">
+                                <div className={`absolute w-24 h-24 rounded-full ${theme.glow} blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
+                                
+                                <div className="relative z-10 text-center space-y-1.5">
+                                  <span className="text-sm font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
+                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
+                                  </span>
+                                  <div className="flex items-center gap-1.5 justify-center">
+                                    {proj.tags.slice(0, 3).map((t) => (
+                                      <span key={t} className="text-[8px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-2 py-0.5 rounded tracking-wide font-medium">
+                                        {t}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6 relative z-10">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
+                                {proj.category || 'Featured Work'}
+                              </span>
+                            </div>
+                            <h4 className="text-xl font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug">
+                              {proj.title}
+                            </h4>
+                            <p className="text-slate-300 text-sm leading-relaxed font-sans font-light">
+                              {shortBrief}
+                            </p>
+                          </div>
+
+                          <div className="space-y-4 pt-4 border-t border-white/5">
+                            {/* Tech Stack Tags */}
+                            <div className="space-y-2">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
+                                Technologies Used:
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {proj.tags.map(tag => {
+                                  let cleanTag = tag;
+                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
+                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
+                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
+                                  return (
+                                    <span
+                                      key={tag}
+                                      className={`text-[10px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
+                                      style={{
+                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
+                                      }}
+                                    >
+                                      {cleanTag}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* View Project Links Button Dock */}
+                            <div className="flex items-center gap-3 pt-2">
+                              {proj.demoUrl && (
+                                <a
+                                  href={proj.demoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <span>Live Demo</span>
+                                  <ExternalLink size={13} />
+                                </a>
+                              )}
+                              
+                              {proj.githubUrl && (
+                                <a
+                                  href={proj.githubUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <Github size={13} />
+                                  <span>Repository</span>
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <h4 className="text-base font-bold text-slate-100 mt-3 group-hover:text-white transition-colors truncate">{proj.title}</h4>
-                        <p className="text-slate-400 text-xs mt-2 line-clamp-4 leading-relaxed">{proj.description}</p>
-                      </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {data.projects.map((proj, index) => {
+                    const sections = parseCaseStudy(proj.description);
+                    const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                    
+                      return (
+                        <motion.div
+                          key={proj.id}
+                          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                          viewport={{ once: true, margin: "-60px" }}
+                          transition={{ 
+                            duration: 0.65, 
+                            delay: index * 0.1, 
+                            ease: [0.16, 1, 0.3, 1] 
+                          }}
+                          className="glass project-card rounded-2xl flex flex-col justify-between hover:shadow-2xl hover:border-white/10 transition-all duration-500 relative overflow-hidden group border border-white/5"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
+                          }}
+                        >
+                        {/* Thumbnail Container */}
+                        <div className="h-44 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
+                          {proj.image ? (
+                            <div className="w-full h-full relative overflow-hidden">
+                              <img 
+                                src={proj.image} 
+                                alt={proj.title} 
+                                referrerPolicy="no-referrer" 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                            </div>
+                          ) : (
+                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-4 group-hover:from-slate-900/70 group-hover:to-zinc-850/50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                              {/* Browser bar mockup */}
+                              <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                                <div className="flex gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
+                                </div>
+                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-2.5 py-0.5 rounded-full border border-white/5 max-w-[120px] truncate tracking-wider font-medium">
+                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
+                                </span>
+                                <div className="w-2" />
+                              </div>
 
-                      <div className="flex flex-wrap gap-1 pt-4 border-t border-white/5 mt-4">
-                        {proj.tags.slice(0, 3).map(tag => (
-                          <span key={tag} className="text-[9px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.2 rounded border border-white/10">
-                            #{tag}
-                          </span>
-                        ))}
-                        {proj.tags.length > 3 && (
-                          <span className="text-[9px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.2 rounded border border-white/10">
-                            +{proj.tags.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                              {/* Center preview visualization */}
+                              <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
+                                <div className={`absolute w-16 h-16 rounded-full ${theme.glow} blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
+                                
+                                <div className="relative z-10 text-center space-y-1.5">
+                                  <span className="text-xs font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
+                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
+                                  </span>
+                                  <div className="flex items-center gap-1 justify-center">
+                                    {proj.tags.slice(0, 2).map((t) => (
+                                      <span key={t} className="text-[7.5px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-1.5 py-0.5 rounded tracking-wide font-medium">
+                                        {t}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="p-6 flex-1 flex flex-col justify-between gap-5 relative z-10">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
+                                {proj.category || 'Featured Work'}
+                              </span>
+                            </div>
+                            <h4 className="text-lg font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug truncate">
+                              {proj.title}
+                            </h4>
+                            <p className="text-slate-300 text-xs leading-relaxed font-sans font-light line-clamp-3">
+                              {shortBrief}
+                            </p>
+                          </div>
+
+                          <div className="space-y-4 pt-4 border-t border-white/5">
+                            {/* Tech Stack Tags */}
+                            <div className="space-y-2">
+                              <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
+                                Technologies Used:
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {proj.tags.map(tag => {
+                                  let cleanTag = tag;
+                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
+                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
+                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
+                                  return (
+                                    <span
+                                      key={tag}
+                                      className={`text-[9px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
+                                      style={{
+                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
+                                      }}
+                                    >
+                                      {cleanTag}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* View Project Links Button Dock */}
+                            <div className="flex items-center gap-3 pt-2">
+                              {proj.demoUrl && (
+                                <a
+                                  href={proj.demoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <span>Live Demo</span>
+                                  <ExternalLink size={13} />
+                                </a>
+                              )}
+                              
+                              {proj.githubUrl && (
+                                <a
+                                  href={proj.githubUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
+                                >
+                                  <Github size={13} />
+                                  <span>Repository</span>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
-            </section>
+            </motion.section>
 
             {/* Contact Form */}
-            <section id="classic-contact" className="space-y-8 max-w-2xl mx-auto w-full pt-12 pb-16">
+            <GlowingDivider />
+            <motion.section
+              id="classic-contact"
+              className="space-y-8 max-w-2xl mx-auto w-full pt-12 pb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="space-y-1 text-center">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">04 / Communication hub</span>
                 <h3 className="text-2xl font-bold text-white leading-tight">Transmit a Query</h3>
@@ -771,7 +1490,76 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </form>
                 )}
               </div>
-            </section>
+            </motion.section>
+            
+            <footer className="w-full border-t border-white/5 pt-12 pb-16 mt-20" id="portfolio-classic-footer">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1">
+                  <span className="text-sm font-bold text-white tracking-tight">{data.name}</span>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{data.role}</span>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  {data.socials.linkedin && (
+                    <a
+                      href={data.socials.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="LinkedIn"
+                    >
+                      <Linkedin size={16} />
+                    </a>
+                  )}
+                  {data.socials.instagram && (
+                    <a
+                      href={data.socials.instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Instagram"
+                    >
+                      <Instagram size={16} />
+                    </a>
+                  )}
+                  {data.socials.github && (
+                    <a
+                      href={data.socials.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="GitHub"
+                    >
+                      <Github size={16} />
+                    </a>
+                  )}
+                  {data.socials.twitter && (
+                    <a
+                      href={data.socials.twitter}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Twitter"
+                    >
+                      <Twitter size={16} />
+                    </a>
+                  )}
+                  {data.socials.email && (
+                    <a
+                      href={`mailto:${data.socials.email}`}
+                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
+                      title="Email"
+                    >
+                      <Mail size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
+                <span>© 2026 Nour Khalaf Abou El Rouss. All rights reserved.</span>
+              </div>
+            </footer>
           </div>
         </div>
       </div>
@@ -782,7 +1570,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // (Provides an interactive floating HUD overlay that users can toggle/collapse)
   if (data.layoutStyle === 'fullscreen') {
     return (
-      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col font-sans relative overflow-hidden" id="portfolio-layout-fullscreen">
+      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col font-sans relative overflow-hidden" id="portfolio-layout-fullscreen" style={cssVariables}>
         {/* Fullscreen Background 3D Canvas wrapper */}
         <div className="absolute inset-0 z-0">
           {canvasElement}
@@ -828,23 +1616,28 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
                 {/* Social icons inside HUD */}
                 <div className="flex gap-2.5 pt-1.5 border-t border-slate-900/60">
-                  {data.socials.github && (
-                    <a href={data.socials.github} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors">
-                      <Github size={15} />
-                    </a>
-                  )}
                   {data.socials.linkedin && (
-                    <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors">
+                    <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="LinkedIn">
                       <Linkedin size={15} />
                     </a>
                   )}
+                  {data.socials.instagram && (
+                    <a href={data.socials.instagram} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="Instagram">
+                      <Instagram size={15} />
+                    </a>
+                  )}
+                  {data.socials.github && (
+                    <a href={data.socials.github} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="GitHub">
+                      <Github size={15} />
+                    </a>
+                  )}
                   {data.socials.twitter && (
-                    <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors">
+                    <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="Twitter">
                       <Twitter size={15} />
                     </a>
                   )}
                   {data.socials.email && (
-                    <a href={`mailto:${data.socials.email}`} className="text-slate-400 hover:text-white transition-colors">
+                    <a href={`mailto:${data.socials.email}`} className="text-slate-400 hover:text-white transition-colors" title="Email">
                       <Mail size={15} />
                     </a>
                   )}
@@ -890,35 +1683,81 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
             {activeSection === 'projects' && (
               <div className="space-y-3" id="hud-projects">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500">03 / Works List</span>
-                <h3 className="text-lg font-bold text-white">Engineered Artifacts</h3>
+                <h3 className="text-lg font-bold text-white">Developed Projects</h3>
                 
                 {data.projects.length === 0 ? (
                   <p className="text-xs text-slate-500 italic">No projects listed.</p>
                 ) : (
-                  <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-850">
-                    {data.projects.map(proj => (
-                      <div key={proj.id} className="glass-panel p-3 rounded-xl flex items-start justify-between gap-3 group">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <h4 className="text-xs font-bold text-slate-200 truncate group-hover:text-white">{proj.title}</h4>
-                            <span className="text-[8px] font-mono text-emerald-300 bg-emerald-500/10 px-1 py-0.2 rounded uppercase shrink-0">{proj.category}</span>
+                  <div className="space-y-3 max-h-56 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-850">
+                    {data.projects.map((proj, index) => {
+                      const sections = parseCaseStudy(proj.description);
+                      const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                      
+                      return (
+                        <motion.div
+                          key={proj.id}
+                          initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ 
+                            duration: 0.5, 
+                            delay: index * 0.08, 
+                            ease: "easeOut" 
+                          }}
+                          className="glass-panel p-3.5 rounded-xl flex flex-col gap-3 group border border-white/5 relative overflow-hidden"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)',
+                          }}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-white truncate">{proj.title}</h4>
+                              <span className={`text-[8px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2 py-0.5 rounded border border-white/[0.02] uppercase tracking-wider mt-1 inline-block`}>{proj.category || 'Work'}</span>
+                            </div>
                           </div>
-                          <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{proj.description}</p>
-                        </div>
-                        <div className="flex gap-1 shrink-0 mt-0.5">
-                          {proj.githubUrl && (
-                            <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white">
-                              <Github size={13} />
-                            </a>
-                          )}
-                          {proj.demoUrl && (
-                            <a href={proj.demoUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white">
-                              <ExternalLink size={13} />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+
+                          <p className="text-slate-300 text-[11px] leading-relaxed font-light">
+                            {shortBrief}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                            <div className="flex flex-wrap gap-1">
+                              {proj.tags.map(tag => (
+                                <span key={tag} className={`text-[8px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-1.5 py-0.5 rounded border border-white/[0.01]`}>
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              {proj.githubUrl && (
+                                <a
+                                  href={proj.githubUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center justify-center w-6 h-6 rounded-full bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/[0.08] hover:scale-105 active:scale-95 transition-all"
+                                  title="View Repository"
+                                >
+                                  <Github size={11} />
+                                </a>
+                              )}
+                              
+                              {proj.demoUrl && (
+                                <a
+                                  href={proj.demoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`flex items-center justify-center w-6 h-6 rounded-full ${theme.accent} text-black hover:scale-105 active:scale-95 transition-all group/arrow`}
+                                  title="Visit Project Website"
+                                >
+                                  <ArrowUpRight size={11} className="group-hover/arrow:translate-x-0.5 group-hover/arrow:-translate-y-0.5 transition-transform" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -944,7 +1783,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                         value={contactName}
                         onChange={(e) => setContactName(e.target.value)}
                         placeholder="Your Name"
-                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
                       />
                       <input
                         type="email"
@@ -952,7 +1791,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                         value={contactEmail}
                         onChange={(e) => setContactEmail(e.target.value)}
                         placeholder="Your Email"
-                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all"
+                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
                       />
                     </div>
                     <textarea
@@ -961,7 +1800,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       value={contactMsg}
                       onChange={(e) => setContactMsg(e.target.value)}
                       placeholder="Detail your request or general networking message..."
-                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[#9d81ff] focus:ring-1 focus:ring-[#9d81ff] transition-all resize-none"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all resize-none"
                     />
                     
                     {renderDeliverySettings()}

@@ -37,6 +37,7 @@ export interface Socials {
   twitter?: string;
   email?: string;
   website?: string;
+  instagram?: string;
 }
 
 export interface PortfolioData {

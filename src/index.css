@@ -1,63 +1,429 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-glass-bg: rgba(255, 255, 255, 0.03);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
-  --color-accent-emerald: #10b981;
-  --color-bg-dark: #020604;
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Custom classes for Frosted Glass design theme */
+/* 
+  =========================================
+  CELESTIAL OBSIDIAN & VELVET INK THEME
+  A bespoke, high-end, magical design system 
+  engineered to feel incredibly organic and premium.
+  =========================================
+*/
+
+/* Immersive background layout with floating ambient nebulas */
 .frosted-bg {
-  background-color: #020604;
-  background-image: 
-    radial-gradient(circle at 80% 20%, #042c16 0%, transparent 45%), 
-    radial-gradient(circle at 20% 80%, #01170c 0%, transparent 45%);
+  background-color: #030303 !important;
+  background-image: var(--theme-bg-glow, 
+    radial-gradient(circle at 80% 20%, rgba(52, 211, 153, 0.12) 0%, transparent 60%), 
+    radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 60%)
+  ) !important;
+  color: #f4f4f5 !important;
+  position: relative;
 }
 
+/* Soft glowing grid overlay to add magical depth */
+.frosted-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black, transparent 80%);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Typography styles to ensure rich, premium look */
+.frosted-bg h1,
+.frosted-bg h2,
+.frosted-bg h3 {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #ffffff !important;
+}
+
+.frosted-bg h4 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f4f4f5 !important;
+}
+
+/* Exquisite true frosted-glass components */
 .glass {
-  background: rgba(255, 255, 255, 0.03) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 24px !important;
+  background: rgba(10, 10, 12, 0.45) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 20px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+/* Glass pills for tags and categories */
 .glass-pill {
-  padding: 6px 16px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 6px 14px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 999px !important;
   font-size: 11px !important;
+  font-family: var(--font-mono) !important;
   letter-spacing: 0.05em !important;
   text-transform: uppercase !important;
-}
-
-.accent-text {
-  color: #10b981 !important;
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
-}
-
-.avatar-space {
-  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.15) 0%, transparent 70%) !important;
-}
-
-.project-card {
+  color: #a1a1aa !important;
   transition: all 0.3s ease !important;
-  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.glass-pill:hover {
+  background: rgba(var(--theme-color-rgb, 52, 211, 153), 0.08) !important;
+  border-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.3) !important;
+  color: var(--theme-accent-color, #34d399) !important;
+  transform: translateY(-1px);
+}
+
+/* Accent texts with dynamic shadow glows */
+.accent-text {
+  color: var(--theme-accent-color, #34d399) !important;
+  text-shadow: 0 0 25px rgba(var(--theme-color-rgb, 52, 211, 153), 0.35) !important;
+}
+
+/* Beautiful dynamic background space for 3D elements */
+.avatar-space {
+  background: radial-gradient(circle at center, rgba(var(--theme-color-rgb, 52, 211, 153), 0.12) 0%, transparent 70%) !important;
+  animation: float-pulse 10s ease-in-out infinite alternate;
+}
+
+@keyframes float-pulse {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.4; }
+  100% { transform: scale(1.1) translate(1%, 2%); opacity: 0.6; }
+}
+
+/* Project cards with incredible sleek visual lift and dynamic border lighting */
+.project-card {
+  background: rgba(12, 12, 16, 0.5) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 20px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 60%);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .project-card:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(16, 16, 24, 0.6) !important;
+  border-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.25) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.5), 
+    0 0 30px rgba(var(--theme-color-rgb, 52, 211, 153), 0.1) !important;
 }
 
-/* Glass panel enhancements for builder */
+/* Premium input forms with micro-borders and neon glow focus */
+.frosted-bg input,
+.frosted-bg textarea,
+.frosted-bg select {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.frosted-bg input::placeholder,
+.frosted-bg textarea::placeholder {
+  color: #52525b !important;
+}
+
+.frosted-bg input:focus,
+.frosted-bg textarea:focus,
+.frosted-bg select:focus {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border-color: var(--theme-accent-color, #34d399) !important;
+  box-shadow: 0 0 15px rgba(var(--theme-color-rgb, 52, 211, 153), 0.15) !important;
+  outline: none !important;
+}
+
+/* Dark theme structural elements (preserving background contrast) */
+.frosted-bg [class*="bg-slate-900"],
+.frosted-bg [class*="bg-slate-950"] {
+  background-color: rgba(12, 12, 16, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: #e4e4e7 !important;
+}
+
+.frosted-bg [class*="bg-slate-900"]:hover {
+  background-color: rgba(20, 20, 28, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.frosted-bg [class*="border-white/"] {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.frosted-bg [class*="border-white\\["] {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Glass panels */
 .glass-panel {
-  background: rgba(10, 15, 30, 0.4) !important;
+  background: rgba(10, 10, 14, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Social links styling with sleek backdrop and color hover effects */
+.frosted-bg a[href*="github.com"], 
+.frosted-bg a[href*="linkedin.com"], 
+.frosted-bg a[href*="twitter.com"], 
+.frosted-bg a[href*="mailto:"] {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #a1a1aa !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.frosted-bg a[href*="github.com"]:hover, 
+.frosted-bg a[href*="linkedin.com"]:hover, 
+.frosted-bg a[href*="twitter.com"]:hover, 
+.frosted-bg a[href*="mailto:"]:hover {
+  background-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.1) !important;
+  border-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.3) !important;
+  color: var(--theme-accent-color, #34d399) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(var(--theme-color-rgb, 52, 211, 153), 0.1) !important;
+}
+
+/* Fix project card internal links and demo buttons */
+.frosted-bg .project-card a {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #d4d4d8 !important;
+}
+
+.frosted-bg .project-card a:hover {
+  background-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.12) !important;
+  border-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.3) !important;
+  color: var(--theme-accent-color, #34d399) !important;
+  box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 52, 211, 153), 0.15) !important;
+}
+
+/* Dynamic skill badges */
+.frosted-bg #split-skills span,
+.frosted-bg #classic-skills span,
+.frosted-bg .project-card span[class*="text-[9px]"],
+.frosted-bg .project-card span[class*="font-mono"] {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #a1a1aa !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.frosted-bg #split-skills span:hover,
+.frosted-bg #classic-skills span:hover,
+.frosted-bg .project-card span[class*="text-[9px]"]:hover,
+.frosted-bg .project-card span[class*="font-mono"]:hover {
+  background-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.08) !important;
+  border-color: rgba(var(--theme-color-rgb, 52, 211, 153), 0.25) !important;
+  color: var(--theme-accent-color, #34d399) !important;
+  transform: scale(1.05);
+}
+
+/* Beautiful form labels */
+.frosted-bg label {
+  color: #a1a1aa !important;
+  font-weight: 500 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Modern navigation header links */
+.frosted-bg header nav a {
+  color: #71717a !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  transition: all 0.3s ease !important;
+}
+
+.frosted-bg header nav a:hover {
+  color: var(--theme-accent-color, #34d399) !important;
+}
+
+/* Primary Action Buttons - filled with elegant neon back-glow */
+.frosted-bg button[type="submit"],
+.frosted-bg a[href="#classic-contact"],
+.frosted-bg a[href="#split-contact"] {
+  background-color: var(--theme-accent-color, #34d399) !important;
+  color: #030303 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 4px 14px rgba(var(--theme-color-rgb, 52, 211, 153), 0.4) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.frosted-bg button[type="submit"]:hover,
+.frosted-bg a[href="#classic-contact"]:hover,
+.frosted-bg a[href="#split-contact"]:hover {
+  background-color: #ffffff !important;
+  color: #030303 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Mobile menu toggle */
+.frosted-bg button[id*="mobile"], 
+.frosted-bg button[class*="sm:hidden"] {
+  color: #ffffff !important;
+}
+
+/* Header dynamic blurring top overlays */
+.frosted-bg header {
+  background: rgba(3, 3, 3, 0.65) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
+
+.frosted-bg header [class*="text-slate-800"] {
+  color: #ffffff !important;
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #030303;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-accent-color, #34d399);
+}
+
+/* =========================================
+   TERMINAL LOADER ANIMATIONS & STYLES
+   ========================================= */
+@keyframes blinkCursor {
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes typeAndDelete {
+  0%,
+  10% {
+    width: 0;
+  }
+  45%,
+  55% {
+    width: 6.2em;
+  } /* adjust width based on content */
+  90%,
+  100% {
+    width: 0;
+  }
+}
+
+.terminal-loader {
+  border: 0.1em solid rgba(255, 255, 255, 0.15);
+  background-color: #0c0c0e;
+  color: var(--theme-accent-color, #34d399);
+  font-family: var(--font-mono), monospace;
+  font-size: 1rem;
+  padding: 1.75em 1.25em 1.25em 1.25em;
+  width: 14em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.terminal-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.75em;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 0 0.6em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 0.35em;
+}
+
+.control {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background-color: #555;
+}
+
+.control.close {
+  background-color: #ef4444;
+}
+
+.control.minimize {
+  background-color: #f59e0b;
+}
+
+.control.maximize {
+  background-color: #10b981;
+}
+
+.terminal-title {
+  font-size: 11px;
+  color: #a1a1aa;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.05em;
+}
+
+.terminal-text-animated {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 0.15em solid var(--theme-accent-color, #34d399); /* Cursor */
+  animation:
+    typeAndDelete 4s steps(11) infinite,
+    blinkCursor 0.5s step-end infinite alternate;
+  margin-top: 1em;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+

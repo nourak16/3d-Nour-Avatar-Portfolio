@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { INITIAL_PORTFOLIO_DATA } from './presets';
 import { PortfolioData } from './types';
 import AvatarCanvas from './components/AvatarCanvas';
@@ -6,9 +6,38 @@ import PortfolioView from './components/PortfolioView';
 import { motion, AnimatePresence } from 'motion/react';
 import { Loader2, ArrowRight, Sparkles } from 'lucide-react';
 
+// Helper to map theme name to RGB triple
+const getThemeColorRgb = (color: string) => {
+  switch (color) {
+    case 'sky': return '56, 189, 248';
+    case 'violet': return '167, 139, 250';
+    case 'amber': return '251, 191, 36';
+    case 'rose': return '251, 113, 133';
+    case 'emerald': return '52, 211, 153';
+    case 'indigo':
+    default: return '129, 140, 248';
+  }
+};
+
+// Helper to map theme name to hex color
+const getThemeColorHex = (color: string) => {
+  switch (color) {
+    case 'sky': return '#38bdf8';
+    case 'violet': return '#a78bfa';
+    case 'amber': return '#fbbf24';
+    case 'rose': return '#fb7185';
+    case 'emerald': return '#34d399';
+    case 'indigo':
+    default: return '#818cf8';
+  }
+};
+
 export default function App() {
   // Directly load your precise customized portfolio data
   const [data, setData] = useState<PortfolioData>(INITIAL_PORTFOLIO_DATA);
+
+  const rgbVal = getThemeColorRgb(data.themeColor);
+  const hexVal = getThemeColorHex(data.themeColor);
 
   // Clear any stale local storage from construction phase so it resets for everyone
   useEffect(() => {
@@ -18,28 +47,52 @@ export default function App() {
   const [animations, setAnimations] = useState<string[]>([]);
   const [loadStatus, setLoadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [loadProgress, setLoadProgress] = useState(0);
+  const [displayedProgress, setDisplayedProgress] = useState(0);
+  const [isTimeMinMet, setIsTimeMinMet] = useState(false);
 
   // Control full-screen preloader state
   const [showPreloader, setShowPreloader] = useState(true);
   const [showSkip, setShowSkip] = useState(false);
 
-  // Trigger skip capability after a short delay so users are never stuck
+  // Enforce a minimum of 10 seconds of loading screen
+  useEffect(() => {
+    const minTime = 10000; // 10000 milliseconds = 10 seconds minimum loading time
+    const startTime = Date.now();
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      
+      // Calculate smooth simulated progress towards 99%
+      const percentage = Math.min(99, Math.floor((elapsed / minTime) * 100));
+      setDisplayedProgress(prev => Math.max(prev, percentage));
+
+      if (elapsed >= minTime) {
+        setIsTimeMinMet(true);
+        clearInterval(interval);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Trigger skip capability after 12 seconds so users are never stuck if a loading issue occurs
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSkip(true);
-    }, 6000);
+    }, 12000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Gracefully transition out of preloader on load success
+  // Gracefully transition out of preloader ONLY after BOTH the 10s minimum is met AND avatar loading has completed
   useEffect(() => {
-    if (loadStatus === 'success') {
+    if (isTimeMinMet && (loadStatus === 'success' || loadStatus === 'error')) {
+      setDisplayedProgress(100);
       const timer = setTimeout(() => {
         setShowPreloader(false);
-      }, 600);
+      }, 800);
       return () => clearTimeout(timer);
     }
-  }, [loadStatus]);
+  }, [isTimeMinMet, loadStatus]);
 
   // Stable rendering of the 3D Canvas to pass as a prop to PortfolioView
   // This keeps the DOM canvas structure and orbits intact
@@ -95,11 +148,18 @@ export default function App() {
             key="preloader-overlay"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)', transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 select-none overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030303] select-none overflow-hidden"
             id="app-global-preloader"
+            style={{
+              '--theme-accent-color': hexVal,
+              '--theme-color-rgb': rgbVal,
+            } as React.CSSProperties}
           >
-            {/* Ambient luxury radial glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.06)_0%,rgba(2,6,23,1)_70%)] pointer-events-none" />
+            {/* Ambient luxury radial glow matching the dynamic theme color and true black edges */}
+            <div 
+              className="absolute inset-0 pointer-events-none" 
+              style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.08) 0%, #030303 70%)` }}
+            />
 
             {/* Micro horizontal grid lines or details */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_16px] pointer-events-none opacity-40" />
@@ -111,7 +171,14 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
               >
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 font-mono text-[10px] tracking-widest uppercase font-medium mb-4">
+                <div 
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[10px] tracking-widest uppercase font-medium mb-4"
+                  style={{
+                    backgroundColor: `rgba(${rgbVal}, 0.1)`,
+                    borderColor: `rgba(${rgbVal}, 0.2)`,
+                    color: hexVal
+                  }}
+                >
                   <Sparkles size={11} className="animate-pulse" />
                   <span>Interactive Experience</span>
                 </div>
@@ -130,13 +197,13 @@ export default function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-slate-400 text-sm font-mono tracking-wider uppercase"
+                className="text-slate-400 text-sm font-mono tracking-wider uppercase mb-8"
               >
                 {data.role}
               </motion.p>
 
               {/* Progress and control space */}
-              <div className="mt-12 h-16 flex flex-col items-center justify-center w-64">
+              <div className="h-48 flex flex-col items-center justify-center">
                 {loadStatus === 'error' ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -146,28 +213,48 @@ export default function App() {
                     <span className="text-rose-400 text-xs font-mono font-medium">Avatar Loading Bypassed</span>
                     <button
                       onClick={() => setShowPreloader(false)}
-                      className="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-sans text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-lg active:scale-95 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-black font-sans text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-lg active:scale-95 cursor-pointer"
+                      style={{
+                        backgroundColor: hexVal,
+                        boxShadow: `0 0 15px rgba(${rgbVal}, 0.35)`
+                      }}
                     >
                       <span>Enter Standard Portfolio</span>
                       <ArrowRight size={13} />
                     </button>
                   </motion.div>
                 ) : (
-                  <div className="w-full flex flex-col items-center">
+                  <div className="flex flex-col items-center">
+                    {/* Terminal Loader (From Uiverse.io by jeremyssocial) */}
+                    <div className="terminal-loader">
+                      <div className="terminal-header">
+                        <div className="terminal-title">Status</div>
+                        <div className="terminal-controls">
+                          <div className="control close"></div>
+                          <div className="control minimize"></div>
+                          <div className="control maximize"></div>
+                        </div>
+                      </div>
+                      <div className="terminal-text-animated">Loading...</div>
+                    </div>
+
                     {/* Linear thin high-precision progress bar */}
-                    <div className="w-full h-[3px] bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+                    <div className="w-64 h-[3px] bg-white/5 rounded-full overflow-hidden relative border border-white/5 mt-6">
                       <div
-                        className="h-full bg-emerald-500 rounded-full transition-all duration-300 ease-out"
-                        style={{ width: `${loadProgress}%` }}
+                        className="h-full rounded-full transition-all duration-300 ease-out"
+                        style={{ 
+                          width: `${displayedProgress}%`,
+                          backgroundColor: hexVal
+                        }}
                       />
                     </div>
 
-                    <div className="w-full flex items-center justify-between text-[10px] font-mono text-slate-500 mt-3 tracking-wider uppercase">
+                    <div className="w-64 flex items-center justify-between text-[10px] font-mono text-slate-500 mt-3 tracking-wider uppercase">
                       <span className="flex items-center gap-1">
-                        <Loader2 size={10} className="animate-spin text-emerald-400/80" />
-                        {loadProgress < 100 ? 'Syncing 3D Scene' : 'Initializing Avatar'}
+                        <Loader2 size={10} className="animate-spin" style={{ color: hexVal }} />
+                        {displayedProgress < 100 ? 'Syncing 3D Scene' : 'Initializing Avatar'}
                       </span>
-                      <span className="font-semibold text-slate-300">{loadProgress}%</span>
+                      <span className="font-semibold text-slate-300">{displayedProgress}%</span>
                     </div>
                   </div>
                 )}
@@ -181,7 +268,7 @@ export default function App() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
                 onClick={() => setShowPreloader(false)}
-                className="absolute bottom-8 text-[11px] font-mono text-slate-500 hover:text-emerald-400 underline underline-offset-4 cursor-pointer transition-colors"
+                className="absolute bottom-8 text-[11px] font-mono text-slate-500 hover:text-[var(--theme-accent-color)] underline underline-offset-4 cursor-pointer transition-colors"
               >
                 Skip 3D setup & view static portfolio
               </motion.button>

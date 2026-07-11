@@ -854,6 +854,17 @@ export default function ControlPanel({
                       />
                     </div>
                     <div className="space-y-1">
+                      <label htmlFor="input-social-instagram" className="text-[10px] text-slate-400">Instagram Link</label>
+                      <input
+                        id="input-social-instagram"
+                        type="url"
+                        value={data.socials.instagram || ''}
+                        onChange={(e) => updateSocialFields({ instagram: e.target.value })}
+                        placeholder="https://instagram.com"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
                       <label htmlFor="input-social-twitter" className="text-[10px] text-slate-400">Twitter X Link</label>
                       <input
                         id="input-social-twitter"

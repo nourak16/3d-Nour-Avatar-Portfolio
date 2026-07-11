@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { Timer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { LightingPreset, PedestalStyle } from '../types';
@@ -183,7 +184,7 @@ export default function AvatarCanvas({
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     rendererRef.current = renderer;
@@ -310,14 +311,15 @@ export default function AvatarCanvas({
     renderer.setSize(rect.width, rect.height);
 
     // Animation loop
-    const clock = new THREE.Clock();
+    const timer = new Timer();
     let animationFrameId: number;
 
-    const animate = () => {
+    const animate = (timestamp?: number) => {
       animationFrameId = requestAnimationFrame(animate);
 
-      const deltaTime = clock.getDelta();
-      const elapsedTime = clock.getElapsedTime();
+      timer.update(timestamp);
+      const deltaTime = timer.getDelta();
+      const elapsedTime = timer.getElapsed();
 
       // Smoothly interpolate scroll depth with lerp
       smoothedScrollRef.current += (scrollPercentRef.current - smoothedScrollRef.current) * 0.05;

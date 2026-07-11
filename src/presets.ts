@@ -55,51 +55,51 @@ export const AVATAR_PRESETS: AvatarModelPreset[] = [
 
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   name: "Nour Khalaf Abou El Rouss",
-  role: "Full stack web developer",
-  tagline: "Designing elegant digital experiences where creativity meets performance.",
-  bio: "Hi! I'm Nour, a Full-Stack Web Developer focused on building modern websites and e-commerce experiences. I combine clean design, thoughtful user experiences, and scalable development to create fast, responsive, and engaging products. Whether it's a business website, portfolio, or online store, I enjoy turning ideas into polished digital experiences that people love to use.",
-  about: "I specialize in building modern, responsive websites and web applications using HTML, CSS, JavaScript, and React. On the backend, I work with MySQL and Supabase to create secure, scalable, and data-driven applications. I focus on writing clean, maintainable code while delivering intuitive user experiences and visually polished interfaces.",
+  role: "Full-Stack Web Developer",
+  tagline: "Crafting pixel-perfect React applications, elegant user interfaces, and secure full-stack database solutions.",
+  bio: "I build fast, responsive, and pixel-perfect websites. I specialize in crafting elegant user interfaces with HTML, CSS, JavaScript, and React, combined with secure relational backends using MySQL and Supabase.",
+  about: "I am a Full-Stack Web Developer dedicated to building highly performant and responsive websites. I specialize in frontend development using HTML, CSS, JavaScript, and React to construct modular, clean, and engaging user experiences. On the backend, I leverage the power of MySQL and Supabase to design scalable database structures, manage user authentication, and ensure reliable data persistence. I focus on clean code, responsive design, and seamless user experiences across all devices.",
   skills: [
     {
       id: "sk-1782872109023",
       name: "HTML5",
-      proficiency: 80,
+      proficiency: 90,
       category: "Frontend"
     },
     {
       id: "sk-1782872120555",
       name: "CSS3",
-      proficiency: 80,
+      proficiency: 85,
       category: "Frontend"
     },
     {
       id: "sk-1782872135159",
       name: "JavaScript",
-      proficiency: 80,
+      proficiency: 90,
       category: "Frontend"
     },
     {
       id: "sk-1782872195960",
       name: "React",
-      proficiency: 50,
+      proficiency: 80,
       category: "Frontend"
     },
     {
       id: "sk-1782872218487",
       name: "Supabase",
-      proficiency: 60,
+      proficiency: 75,
       category: "Backend"
     },
     {
       id: "sk-1782872235530",
       name: "MySQL",
-      proficiency: 80,
+      proficiency: 85,
       category: "Backend"
     },
     {
       id: "sk-1782872264967",
-      name: "Responsive Web Design",
-      proficiency: 60,
+      name: "Responsive Design",
+      proficiency: 90,
       category: "Design"
     }
   ],
@@ -107,11 +107,11 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     {
       id: "proj-1782872638671",
       title: "Floraison de Lynn – Flower Store",
-      description: "A modern and responsive flower store website designed to showcase elegant floral collections with a premium shopping experience. Built with HTML ,CSS ,JAVASCRIPT, the project emphasizes clean UI/UX, smooth interactions, and a mobile-friendly layout while providing an intuitive browsing experience for customers.",
+      description: "A premium, fully responsive floral e-commerce platform designed from scratch. **Problem:** Legacy templates caused high initial page load times and sluggish mobile navigation, leading to early drop-offs. **Approach:** Built custom layout structures using vanilla web standards to bypass third-party library weight, and developed an intuitive navigation drawer with CSS-hardware accelerated triggers. **Impact:** Reduced initial paint load time to under 1.2 seconds, boosting retention and smoothing out the multi-stage checkout experience.",
       category: "Online Store",
       tags: [
-        "HTML",
-        "CSS",
+        "HTML5",
+        "CSS3",
         "JavaScript"
       ],
       demoUrl: "https://www.floraisondelynn.com/"
@@ -120,9 +120,9 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   socials: {
     github: "https://github.com",
     linkedin: "https://linkedin.com",
+    instagram: "https://instagram.com",
     twitter: "https://twitter.com",
-    email: "nourabouelrouss@gmail.com",
-    website: "https://marcusvance.dev"
+    email: "nourdika098@gmail.com"
   },
   themeColor: "emerald",
   layoutStyle: "classic",
