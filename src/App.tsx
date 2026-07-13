@@ -160,7 +160,7 @@ export default function App() {
             key="preloader-overlay"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)', transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900 select-none overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1b211f] select-none overflow-hidden"
             id="app-global-preloader"
             style={{
               '--theme-accent-color': hexVal,
@@ -170,7 +170,7 @@ export default function App() {
             {/* Ambient luxury radial glow matching the dynamic theme color and true black edges */}
             <div 
               className="absolute inset-0 pointer-events-none" 
-              style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.08) 0%, #0f172a 70%)` }}
+              style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.08) 0%, #1b211f 70%)` }}
             />
 
             {/* Micro horizontal grid lines or details */}

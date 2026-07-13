@@ -82,9 +82,9 @@ export function Header({ layoutStyle, name, activeSection, onNavigate, socials }
       className={cn(
         'sticky top-0 z-50 mx-auto w-full transition-all duration-300 ease-out border-b border-transparent',
         scrolled && !open
-          ? 'bg-slate-800/80 backdrop-blur-md border-white/10 md:top-4 md:max-w-4xl md:shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:rounded-full md:px-2'
+          ? 'bg-[#151b19]/80 backdrop-blur-md border-white/[0.06] md:top-4 md:max-w-4xl md:shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:rounded-full md:px-2'
           : 'bg-transparent',
-        open && 'bg-slate-800 border-white/5'
+        open && 'bg-[#151b19] border-white/5'
       )}
     >
       <nav
@@ -108,7 +108,7 @@ export function Header({ layoutStyle, name, activeSection, onNavigate, socials }
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-1.5 bg-slate-950/40 border border-white/[0.04] p-1 rounded-full relative">
+        <div className="hidden md:flex items-center gap-1.5 bg-[#121715]/50 border border-white/[0.04] p-1 rounded-full relative">
           {links.map((link) => {
             const isActive = activeSection === link.id;
             return (
@@ -182,7 +182,7 @@ export function Header({ layoutStyle, name, activeSection, onNavigate, socials }
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden border-t border-white/5 bg-slate-800/95 backdrop-blur-xl"
+            className="md:hidden border-t border-white/5 bg-[#151b19]/95 backdrop-blur-xl"
           >
             <div className="flex flex-col gap-1 px-6 py-6 border-b border-white/5">
               {links.map((link) => {

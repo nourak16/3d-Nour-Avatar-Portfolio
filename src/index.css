@@ -16,7 +16,7 @@
 
 /* Immersive background layout with floating ambient nebulas */
 .frosted-bg {
-  background-color: #1e293b !important;
+  background-color: #1b211f !important;
   background-image: var(--theme-bg-glow, 
     radial-gradient(circle at 80% 20%, rgba(52, 211, 153, 0.12) 0%, transparent 60%), 
     radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 60%)
@@ -213,7 +213,7 @@
 /* Dark theme structural elements (preserving background contrast) */
 .frosted-bg [class*="bg-slate-800"],
 .frosted-bg [class*="bg-slate-950"],
-.frosted-bg [class*="bg-\[#1e293b\]"] {
+.frosted-bg [class*="bg-\[#1b211f\]"] {
   background-color: rgba(12, 12, 16, 0.4) !important;
   border-color: rgba(255, 255, 255, 0.05) !important;
   color: #e4e4e7 !important;
@@ -364,7 +364,7 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #1b211f;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
@@ -399,8 +399,8 @@
 }
 
 .terminal-loader {
-  border: 0.1em solid rgba(255, 255, 255, 0.15);
-  background-color: #334155;
+  border: 0.1em solid rgba(255, 255, 255, 0.1);
+  background-color: #121615;
   color: var(--theme-accent-color, #34d399);
   font-family: var(--font-mono), monospace;
   font-size: 1rem;
