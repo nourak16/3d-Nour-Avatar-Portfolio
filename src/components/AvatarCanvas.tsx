@@ -2141,10 +2141,10 @@ export default function AvatarCanvas({
           </div>
           <div className="max-w-md">
             <h3 className="text-rose-400 font-medium text-lg">Load Error</h3>
-            <p className="text-sm text-slate-400 mt-2 line-clamp-4 bg-slate-900/50 p-3 rounded-lg border border-slate-800 font-mono text-xs text-left select-text">
+            <p className="text-sm text-slate-400 mt-2 line-clamp-4 bg-white/50 p-3 rounded-lg border border-slate-800 font-mono text-xs text-left select-text">
               {errorMsg || 'Failed to download the model asset. Verify CORS header setup on the model server.'}
             </p>
-            <div className="mt-4 flex flex-col gap-2 text-xs text-left bg-slate-900/30 p-3 rounded border border-slate-800 text-slate-400">
+            <div className="mt-4 flex flex-col gap-2 text-xs text-left bg-white/30 p-3 rounded border border-slate-800 text-slate-400">
               <span className="font-semibold text-slate-300">Supported Formats:</span>
               <span>• Complete `.glb` or `.gltf` single file bundles</span>
               <span>• Ensure model uses a secure HTTPS URL</span>

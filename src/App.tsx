@@ -130,7 +130,19 @@ export default function App() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden font-sans" id="application-root">
+    <div className="w-full min-h-screen bg-slate-900 text-white flex flex-col overflow-hidden font-sans relative" id="application-root" style={{
+      '--theme-accent-color': hexVal,
+      '--theme-color-rgb': rgbVal,
+    } as React.CSSProperties}>
+      
+      {/* Persistent App-wide Ambient radial glow */}
+      <div 
+         className="absolute inset-0 pointer-events-none z-0" 
+         style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.05) 0%, #0f172a 80%)` }}
+      />
+      {/* Persistent App-wide Micro horizontal grid lines */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:100%_16px] pointer-events-none z-0 opacity-50" />
+
       {/* Portfolio View animated entrance once preloader is done */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -148,7 +160,7 @@ export default function App() {
             key="preloader-overlay"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)', transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030303] select-none overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900 select-none overflow-hidden"
             id="app-global-preloader"
             style={{
               '--theme-accent-color': hexVal,
@@ -158,7 +170,7 @@ export default function App() {
             {/* Ambient luxury radial glow matching the dynamic theme color and true black edges */}
             <div 
               className="absolute inset-0 pointer-events-none" 
-              style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.08) 0%, #030303 70%)` }}
+              style={{ background: `radial-gradient(circle at center, rgba(${rgbVal}, 0.08) 0%, #0f172a 70%)` }}
             />
 
             {/* Micro horizontal grid lines or details */}

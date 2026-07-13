@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { PortfolioData } from '../types';
 import { Header } from './Header';
+import { HoverEffect } from './HoverEffect';
 import { 
   Linkedin, 
   Twitter, 
@@ -473,16 +474,16 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // ==================== LAYOUT A: SPLIT SCREEN STAGE (DEFAULT) ====================
   if (data.layoutStyle === 'split') {
     return (
-      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col md:flex-row font-sans relative" id="portfolio-layout-split" style={cssVariables}>
+      <div className="min-h-screen frosted-bg text-white flex flex-col md:flex-row font-sans relative" id="portfolio-layout-split" style={cssVariables}>
         {/* Fixed Left Canvas Column */}
-        <div className="w-full md:w-[45%] h-[400px] md:h-screen md:sticky md:top-0 bg-white/[0.01] border-b md:border-b-0 md:border-r border-white/5 flex flex-col relative overflow-hidden" id="split-stage-column">
+        <div className="w-full md:w-[45%] h-[400px] md:h-screen md:sticky md:top-0 bg-transparent border-b md:border-b-0 md:border-r border-white/5 flex flex-col relative overflow-hidden" id="split-stage-column">
           {/* Avatar ambient space background */}
           <div className="avatar-space absolute inset-0 rounded-full scale-110 pointer-events-none z-0" />
 
           {/* Header overlay */}
           <div className="absolute top-5 left-6 z-10">
             <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-bold tracking-tight text-slate-800 font-sans">{data.name}</span>
+              <span className="text-sm font-bold tracking-tight text-slate-200 font-sans">{data.name}</span>
               <div className="flex items-center gap-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
                 <span className="text-[10px] text-slate-500 font-medium tracking-wide font-sans">Interactive Portrait</span>
@@ -500,7 +501,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
           {/* Footer visual metadata */}
           <div className="absolute bottom-5 left-6 pointer-events-none z-10 hidden md:block">
             <div className="flex flex-col gap-0.5 font-sans text-[10px] text-slate-400">
-              <span className="font-semibold text-slate-600">3D Control</span>
+              <span className="font-semibold text-slate-400">3D Control</span>
               <span>Drag to rotate · Scroll to zoom</span>
             </div>
           </div>
@@ -550,7 +551,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                     href={data.socials.linkedin}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
                   >
                     <Linkedin size={18} />
                   </a>
@@ -560,7 +561,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                     href={data.socials.twitter}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
                   >
                     <Twitter size={18} />
                   </a>
@@ -568,7 +569,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 {data.socials.email && (
                   <a
                     href={`mailto:${data.socials.email}`}
-                    className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
                   >
                     <Mail size={18} />
                   </a>
@@ -625,12 +626,14 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {sks.map(skill => (
-                            <span
+                            <div
                               key={skill.id}
-                              className="text-xs font-mono bg-white/[0.03] border border-white/5 text-slate-200 px-2.5 py-1 rounded-lg hover:border-white/10 hover:bg-white/[0.05] transition-all"
+                              className="gradient-border-badge text-xs font-mono text-slate-200"
                             >
-                              {skill.name}
-                            </span>
+                              <div className="gradient-border-badge__content">
+                                {skill.name}
+                              </div>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -658,29 +661,17 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               {data.projects.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No project cards configured yet.</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" id="portfolio-split-projects-grid">
-                  {data.projects.map((proj, index) => {
+                <HoverEffect
+                  items={data.projects}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
+                  {(proj: any) => {
                     const sections = parseCaseStudy(proj.description);
                     const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
-                    
                     return (
-                      <motion.div
-                        key={proj.id}
-                        initial={{ opacity: 0, y: 30, scale: 0.97 }}
-                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                        viewport={{ once: true, margin: "-80px" }}
-                        transition={{ 
-                          duration: 0.65, 
-                          delay: index * 0.12, 
-                          ease: [0.16, 1, 0.3, 1] 
-                        }}
-                        className="glass project-card rounded-2xl relative overflow-hidden group hover:shadow-2xl hover:border-white/10 transition-all duration-500 border border-white/5 flex flex-col justify-between"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
-                        }}
-                      >
+                      <div className="flex flex-col h-full flex-grow">
                         {/* Thumbnail Container */}
-                        <div className="h-44 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
+                        <div className="h-44 w-full relative overflow-hidden bg-slate-800/40 border-b border-white/5 flex items-center justify-center">
                           {proj.image ? (
                             <div className="w-full h-full relative overflow-hidden">
                               <img 
@@ -689,120 +680,88 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 referrerPolicy="no-referrer" 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60" />
                             </div>
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-4 group-hover:from-slate-900/70 group-hover:to-zinc-800/40 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                              {/* Browser bar mockup */}
+                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-slate-950/30 relative overflow-hidden flex flex-col justify-between p-4 transition-all duration-700">
                               <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
                                 <div className="flex gap-1.5">
-                                  <span className="w-2 h-2 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
-                                  <span className="w-2 h-2 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
-                                  <span className="w-2 h-2 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500/40" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/40" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/40" />
                                 </div>
-                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-2.5 py-0.5 rounded-full border border-white/5 max-w-[140px] truncate tracking-wider font-medium">
-                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
+                                <span className="text-[9px] font-mono text-slate-500 border border-white/5 px-2 py-0.5 rounded-full max-w-[120px] truncate">
+                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project.io'}
                                 </span>
-                                <div className="w-3" />
+                                <div className="w-2" />
                               </div>
-
-                              {/* Center preview visualization */}
                               <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
-                                <div className={`absolute w-20 h-20 rounded-full ${theme.glow} blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
-                                
-                                <div className="relative z-10 text-center space-y-1.5">
-                                  <span className="text-sm font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
-                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
-                                  </span>
-                                  <div className="flex items-center gap-1.5 justify-center">
-                                    {proj.tags.slice(0, 2).map((t) => (
-                                      <span key={t} className="text-[7.5px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-1.5 py-0.5 rounded tracking-wide font-medium">
-                                        {t}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
+                                <div className={`absolute w-12 h-12 rounded-full ${theme.glow} blur-lg opacity-10`} />
+                                <span className="text-[10px] font-extrabold tracking-[0.2em] text-slate-400 font-sans uppercase">
+                                  {proj.title.split(' ').map((w: string) => w[0]).join('').slice(0, 3)}
+                                </span>
                               </div>
                             </div>
                           )}
                         </div>
 
                         {/* Card Content */}
-                        <div className="p-6 flex-1 flex flex-col justify-between gap-5 relative z-10">
+                        <div className="p-5 flex-1 flex flex-col justify-between">
                           <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
-                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                                {proj.category || 'Featured Work'}
-                              </span>
-                            </div>
-                            <h4 className="text-lg font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug">
-                              {proj.title}
-                            </h4>
-                            <p className="text-slate-300 text-xs leading-relaxed font-sans font-light line-clamp-3">
-                              {shortBrief}
-                            </p>
-                          </div>
-
-                          <div className="space-y-4 pt-4 border-t border-white/5">
-                            {/* Tech Stack Tags */}
-                            <div className="space-y-2">
-                              <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
-                                Technologies Used:
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {proj.tags.map(tag => {
-                                  let cleanTag = tag;
-                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
-                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
-                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
-                                  return (
-                                    <span
-                                      key={tag}
-                                      className={`text-[9px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
-                                      style={{
-                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
-                                      }}
-                                    >
-                                      {cleanTag}
-                                    </span>
-                                  );
-                                })}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                                <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
+                                  {proj.category || 'Featured Work'}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {proj.tags.slice(0, 2).map((t: string) => (
+                                  <span key={t} className="text-[8px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.05]">
+                                    {t}
+                                  </span>
+                                ))}
                               </div>
                             </div>
-
-                            {/* View Project Links Button Dock */}
-                            <div className="flex items-center gap-3 pt-2">
-                              {proj.demoUrl && (
-                                <a
-                                  href={proj.demoUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <span>Live Demo</span>
-                                  <ExternalLink size={13} />
-                                </a>
-                              )}
-                              
-                              {proj.githubUrl && (
-                                <a
-                                  href={proj.githubUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <Github size={13} />
-                                  <span>Repository</span>
-                                </a>
-                              )}
+                            <div>
+                              <h4 className="text-sm font-bold text-white tracking-tight truncate group-hover:text-[var(--theme-accent-color)] transition-colors">
+                                {proj.title}
+                              </h4>
+                              <p className="text-slate-300 text-[11px] leading-relaxed font-sans font-light line-clamp-2 mt-1">
+                                {shortBrief}
+                              </p>
                             </div>
                           </div>
+
+                          <div className="pt-4 mt-3 border-t border-white/5 flex items-center gap-2">
+                            {proj.demoUrl && (
+                              <a
+                                href={proj.demoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] font-medium px-2 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-white transition-all"
+                              >
+                                <span>Demo</span>
+                                <ExternalLink size={11} />
+                              </a>
+                            )}
+                            {proj.githubUrl && (
+                              <a
+                                href={proj.githubUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] font-medium px-2 py-1.5 rounded-lg border border-white/10 hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all"
+                              >
+                                <Github size={11} />
+                                <span>Code</span>
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </motion.div>
+                      </div>
                     );
-                  })}
-                </div>
+                  }}
+                </HoverEffect>
               )}
             </motion.section>
 
@@ -832,7 +791,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-1">
                         <label htmlFor="contact-form-name" className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Your Name</label>
                         <input
@@ -890,9 +849,9 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
           </main>
           
           <div className="px-6 md:px-16 max-w-4xl mx-auto">
-            <footer className="w-full border-t border-white/5 pt-12 pb-16 mt-12" id="portfolio-split-footer">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1">
+            <footer className="w-full border-t border-white/5 pt-12 pb-4 mt-4" id="portfolio-split-footer">
+              <div className="flex flex-col items-center justify-center gap-6">
+                <div className="flex flex-col items-center text-center gap-1">
                   <span className="text-sm font-bold text-white tracking-tight">{data.name}</span>
                   <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{data.role}</span>
                 </div>
@@ -954,8 +913,8 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
-                <span>© 2026 Nour Khalaf Abou El Rouss. All rights reserved.</span>
+              <div className="flex flex-col sm:flex-row items-center justify-center mt-4 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
+                <span>© 2026 Nour Abou El Rouss. All rights reserved.</span>
               </div>
             </footer>
           </div>
@@ -967,7 +926,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // ==================== LAYOUT B: STANDARD SCROLLING / CLASSIC VIEW ====================
   if (data.layoutStyle === 'classic') {
     return (
-      <div className="h-screen overflow-y-auto frosted-bg text-slate-100 flex flex-col font-sans relative overflow-x-hidden scroll-smooth" id="portfolio-layout-classic" style={cssVariables}>
+      <div className="h-screen overflow-y-auto frosted-bg text-white flex flex-col font-sans relative overflow-x-hidden scroll-smooth" id="portfolio-layout-classic" style={cssVariables}>
         {/* Navigation Bar */}
         <Header
           layoutStyle="classic"
@@ -1073,29 +1032,14 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               {data.skills.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No skills listed yet.</p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {Object.entries(categorizedSkills).map(([cat, sks]) => {
-                    if (sks.length === 0) return null;
-                    return (
-                      <div key={cat} className="glass p-6 rounded-2xl space-y-4">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 font-mono flex items-center gap-2 border-b border-white/5 pb-2">
-                          <span className={`w-1.5 h-1.5 rounded-full ${theme.accent}`} />
-                          {cat}
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {sks.map(skill => (
-                            <span
-                              key={skill.id}
-                              className="text-xs bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-200 px-3 py-1.5 rounded-xl transition-all font-mono"
-                            >
-                              {skill.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <HoverEffect
+                  items={Object.entries(categorizedSkills)
+                    .filter(([_, sks]) => sks.length > 0)
+                    .map(([cat, sks]) => ({
+                      title: cat,
+                      description: sks.map((s) => s.name).join(", "),
+                    }))}
+                />
               )}
             </motion.section>
 
@@ -1112,180 +1056,20 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               <div className="space-y-1 border-b border-white/5 pb-4">
                 <span className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">03 / Works Gallery</span>
                 <h3 className="text-2xl font-bold text-white leading-tight">Featured Project Showcases</h3>
-              </div>
-
-              {data.projects.length === 0 ? (
+              </div>              {data.projects.length === 0 ? (
                 <p className="text-sm text-slate-500 italic">No project cards configured.</p>
-              ) : data.projects.length === 1 ? (
-                <div className="flex justify-center w-full">
-                  {data.projects.map((proj, index) => {
-                    const sections = parseCaseStudy(proj.description);
-                    const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
-                    
-                    return (
-                      <motion.div
-                        key={proj.id}
-                        initial={{ opacity: 0, y: 30, scale: 0.97 }}
-                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                        viewport={{ once: true, margin: "-80px" }}
-                        transition={{ 
-                          duration: 0.65, 
-                          delay: index * 0.12, 
-                          ease: [0.16, 1, 0.3, 1] 
-                        }}
-                        className="glass project-card rounded-2xl w-full max-w-2xl flex flex-col justify-between hover:shadow-2xl hover:border-white/10 transition-all duration-500 relative overflow-hidden group border border-white/5"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
-                        }}
-                      >
-                        {/* Thumbnail Container */}
-                        <div className="h-56 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
-                          {proj.image ? (
-                            <div className="w-full h-full relative overflow-hidden">
-                              <img 
-                                src={proj.image} 
-                                alt={proj.title} 
-                                referrerPolicy="no-referrer" 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-                            </div>
-                          ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-5 group-hover:from-slate-900/70 group-hover:to-zinc-800/40 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                              {/* Browser bar mockup */}
-                              <div className="flex items-center justify-between border-b border-white/[0.04] pb-2.5">
-                                <div className="flex gap-1.5">
-                                  <span className="w-2 h-2 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
-                                  <span className="w-2 h-2 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
-                                  <span className="w-2 h-2 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
-                                </div>
-                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-3 py-0.5 rounded-full border border-white/5 max-w-[160px] truncate tracking-wider font-medium">
-                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
-                                </span>
-                                <div className="w-3" />
-                              </div>
-
-                              {/* Center preview visualization */}
-                              <div className="flex-1 flex flex-col items-center justify-center relative mt-2">
-                                <div className={`absolute w-24 h-24 rounded-full ${theme.glow} blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
-                                
-                                <div className="relative z-10 text-center space-y-1.5">
-                                  <span className="text-sm font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
-                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
-                                  </span>
-                                  <div className="flex items-center gap-1.5 justify-center">
-                                    {proj.tags.slice(0, 3).map((t) => (
-                                      <span key={t} className="text-[8px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-2 py-0.5 rounded tracking-wide font-medium">
-                                        {t}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Card Content */}
-                        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6 relative z-10">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
-                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                                {proj.category || 'Featured Work'}
-                              </span>
-                            </div>
-                            <h4 className="text-xl font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug">
-                              {proj.title}
-                            </h4>
-                            <p className="text-slate-300 text-sm leading-relaxed font-sans font-light">
-                              {shortBrief}
-                            </p>
-                          </div>
-
-                          <div className="space-y-4 pt-4 border-t border-white/5">
-                            {/* Tech Stack Tags */}
-                            <div className="space-y-2">
-                              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
-                                Technologies Used:
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {proj.tags.map(tag => {
-                                  let cleanTag = tag;
-                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
-                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
-                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
-                                  return (
-                                    <span
-                                      key={tag}
-                                      className={`text-[10px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
-                                      style={{
-                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
-                                      }}
-                                    >
-                                      {cleanTag}
-                                    </span>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-                            {/* View Project Links Button Dock */}
-                            <div className="flex items-center gap-3 pt-2">
-                              {proj.demoUrl && (
-                                <a
-                                  href={proj.demoUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <span>Live Demo</span>
-                                  <ExternalLink size={13} />
-                                </a>
-                              )}
-                              
-                              {proj.githubUrl && (
-                                <a
-                                  href={proj.githubUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <Github size={13} />
-                                  <span>Repository</span>
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {data.projects.map((proj, index) => {
+                <HoverEffect
+                  items={data.projects}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {(proj: any) => {
                     const sections = parseCaseStudy(proj.description);
                     const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
-                    
-                      return (
-                        <motion.div
-                          key={proj.id}
-                          initial={{ opacity: 0, y: 30, scale: 0.97 }}
-                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                          viewport={{ once: true, margin: "-60px" }}
-                          transition={{ 
-                            duration: 0.65, 
-                            delay: index * 0.1, 
-                            ease: [0.16, 1, 0.3, 1] 
-                          }}
-                          className="glass project-card rounded-2xl flex flex-col justify-between hover:shadow-2xl hover:border-white/10 transition-all duration-500 relative overflow-hidden group border border-white/5"
-                          style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)',
-                          }}
-                        >
+                    return (
+                      <div className="flex flex-col h-full flex-grow">
                         {/* Thumbnail Container */}
-                        <div className="h-44 w-full relative overflow-hidden bg-slate-950/40 border-b border-white/5 flex items-center justify-center">
+                        <div className="h-44 w-full relative overflow-hidden bg-slate-800/40 border-b border-white/5 flex items-center justify-center">
                           {proj.image ? (
                             <div className="w-full h-full relative overflow-hidden">
                               <img 
@@ -1294,120 +1078,88 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 referrerPolicy="no-referrer" 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60" />
                             </div>
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-zinc-900/30 relative overflow-hidden flex flex-col justify-between p-4 group-hover:from-slate-900/70 group-hover:to-zinc-850/50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                              {/* Browser bar mockup */}
+                            <div className="h-full w-full bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-slate-950/30 relative overflow-hidden flex flex-col justify-between p-4 transition-all duration-700">
                               <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
                                 <div className="flex gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500/30 group-hover:bg-rose-500/60 transition-colors duration-300" />
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/30 group-hover:bg-amber-500/60 transition-colors duration-300" />
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/30 group-hover:bg-emerald-500/60 transition-colors duration-300" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500/40" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/40" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/40" />
                                 </div>
-                                <span className="text-[9px] font-mono text-slate-500 bg-white/[0.01] px-2.5 py-0.5 rounded-full border border-white/5 max-w-[120px] truncate tracking-wider font-medium">
-                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project-preview.io'}
+                                <span className="text-[9px] font-mono text-slate-500 border border-white/5 px-2 py-0.5 rounded-full max-w-[120px] truncate">
+                                  {proj.category ? `${proj.category.toLowerCase().replace(/\s+/g, '-')}.io` : 'project.io'}
                                 </span>
                                 <div className="w-2" />
                               </div>
-
-                              {/* Center preview visualization */}
                               <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
-                                <div className={`absolute w-16 h-16 rounded-full ${theme.glow} blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 scale-90 group-hover:scale-110`} />
-                                
-                                <div className="relative z-10 text-center space-y-1.5">
-                                  <span className="text-xs font-extrabold tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors duration-300 font-sans uppercase block">
-                                    {proj.title.split(' ').map(w => w[0]).join('').slice(0, 3)}
-                                  </span>
-                                  <div className="flex items-center gap-1 justify-center">
-                                    {proj.tags.slice(0, 2).map((t) => (
-                                      <span key={t} className="text-[7.5px] font-mono text-slate-400 bg-white/[0.03] border border-white/5 px-1.5 py-0.5 rounded tracking-wide font-medium">
-                                        {t}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
+                                <div className={`absolute w-12 h-12 rounded-full ${theme.glow} blur-lg opacity-10`} />
+                                <span className="text-[10px] font-extrabold tracking-[0.2em] text-slate-400 font-sans uppercase">
+                                  {proj.title.split(' ').map((w: string) => w[0]).join('').slice(0, 3)}
+                                </span>
                               </div>
                             </div>
                           )}
                         </div>
 
                         {/* Card Content */}
-                        <div className="p-6 flex-1 flex flex-col justify-between gap-5 relative z-10">
+                        <div className="p-5 flex-1 flex flex-col justify-between">
                           <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
-                              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                                {proj.category || 'Featured Work'}
-                              </span>
-                            </div>
-                            <h4 className="text-lg font-bold text-white tracking-tight group-hover:text-[var(--theme-accent-color)] transition-colors duration-350 leading-snug truncate">
-                              {proj.title}
-                            </h4>
-                            <p className="text-slate-300 text-xs leading-relaxed font-sans font-light line-clamp-3">
-                              {shortBrief}
-                            </p>
-                          </div>
-
-                          <div className="space-y-4 pt-4 border-t border-white/5">
-                            {/* Tech Stack Tags */}
-                            <div className="space-y-2">
-                              <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 block font-semibold">
-                                Technologies Used:
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {proj.tags.map(tag => {
-                                  let cleanTag = tag;
-                                  if (tag.toLowerCase() === 'html5') cleanTag = 'HTML';
-                                  if (tag.toLowerCase() === 'css3') cleanTag = 'CSS';
-                                  if (tag.toLowerCase() === 'javascript') cleanTag = 'JS';
-                                  return (
-                                    <span
-                                      key={tag}
-                                      className={`text-[9px] font-mono text-[var(--theme-accent-color)] ${theme.bg} px-2.5 py-1 rounded-lg border border-white/[0.03] hover:border-white/[0.08] transition-all`}
-                                      style={{
-                                        borderColor: `rgba(var(--theme-color-rgb, 52, 211, 153), 0.1)`,
-                                      }}
-                                    >
-                                      {cleanTag}
-                                    </span>
-                                  );
-                                })}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`w-1.5 h-1.5 rounded-full ${theme.accent} animate-pulse`} />
+                                <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest font-semibold">
+                                  {proj.category || 'Featured Work'}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {proj.tags.slice(0, 2).map((t: string) => (
+                                  <span key={t} className="text-[8px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.05]">
+                                    {t}
+                                  </span>
+                                ))}
                               </div>
                             </div>
-
-                            {/* View Project Links Button Dock */}
-                            <div className="flex items-center gap-3 pt-2">
-                              {proj.demoUrl && (
-                                <a
-                                  href={proj.demoUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 text-slate-200 hover:text-[var(--theme-accent-color)] hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <span>Live Demo</span>
-                                  <ExternalLink size={13} />
-                                </a>
-                              )}
-                              
-                              {proj.githubUrl && (
-                                <a
-                                  href={proj.githubUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl transition-all duration-300 bg-white/[0.01] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 text-slate-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] min-h-[40px] shadow-sm"
-                                >
-                                  <Github size={13} />
-                                  <span>Repository</span>
-                                </a>
-                              )}
+                            <div>
+                              <h4 className="text-sm font-bold text-white tracking-tight truncate group-hover:text-[var(--theme-accent-color)] transition-colors">
+                                {proj.title}
+                              </h4>
+                              <p className="text-slate-300 text-[11px] leading-relaxed font-sans font-light line-clamp-3 mt-1">
+                                {shortBrief}
+                              </p>
                             </div>
                           </div>
+
+                          <div className="pt-4 mt-3 border-t border-white/5 flex items-center gap-2">
+                            {proj.demoUrl && (
+                              <a
+                                href={proj.demoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] font-medium px-2 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-white transition-all"
+                              >
+                                <span>Demo</span>
+                                <ExternalLink size={11} />
+                              </a>
+                            )}
+                            {proj.githubUrl && (
+                              <a
+                                href={proj.githubUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] font-medium px-2 py-1.5 rounded-lg border border-white/10 hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all"
+                              >
+                                <Github size={11} />
+                                <span>Code</span>
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </motion.div>
+                      </div>
                     );
-                  })}
-                </div>
+                  }}
+                </HoverEffect>
               )}
             </motion.section>
 
@@ -1437,7 +1189,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-1">
                         <label htmlFor="contact-name-classic" className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Your Full Name</label>
                         <input
@@ -1557,7 +1309,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               </div>
               
               <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
-                <span>© 2026 Nour Khalaf Abou El Rouss. All rights reserved.</span>
+                <span>© 2026 Nour Abou El Rouss. All rights reserved.</span>
               </div>
             </footer>
           </div>
@@ -1570,7 +1322,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
   // (Provides an interactive floating HUD overlay that users can toggle/collapse)
   if (data.layoutStyle === 'fullscreen') {
     return (
-      <div className="min-h-screen frosted-bg text-slate-100 flex flex-col font-sans relative overflow-hidden" id="portfolio-layout-fullscreen" style={cssVariables}>
+      <div className="min-h-screen frosted-bg text-white flex flex-col font-sans relative overflow-hidden" id="portfolio-layout-fullscreen" style={cssVariables}>
         {/* Fullscreen Background 3D Canvas wrapper */}
         <div className="absolute inset-0 z-0">
           {canvasElement}
@@ -1667,12 +1419,12 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                     {data.skills.map(skill => (
                       <span
                         key={skill.id}
-                        className="text-xs bg-white/[0.03] border border-white/5 text-slate-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 font-mono"
+                        className="rotating-border-badge text-xs text-slate-200 flex items-center gap-1.5 font-mono"
                       >
                         <span className="text-[9px] text-slate-400 uppercase tracking-wider">
                           {skill.category.substring(0, 3)}:
                         </span>
-                        <span className="font-medium text-slate-100">{skill.name}</span>
+                        <span className="font-medium text-white">{skill.name}</span>
                       </span>
                     ))}
                   </div>
@@ -1776,32 +1528,41 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-2.5 text-left">
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Your Name</label>
+                        <input
+                          type="text"
+                          required
+                          value={contactName}
+                          onChange={(e) => setContactName(e.target.value)}
+                          placeholder="e.g. Alice Carter"
+                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Your Email Address</label>
+                        <input
+                          type="email"
+                          required
+                          value={contactEmail}
+                          onChange={(e) => setContactEmail(e.target.value)}
+                          placeholder="e.g. alice@example.com"
+                          className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Message Content</label>
+                      <textarea
                         required
-                        value={contactName}
-                        onChange={(e) => setContactName(e.target.value)}
-                        placeholder="Your Name"
-                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
-                      />
-                      <input
-                        type="email"
-                        required
-                        value={contactEmail}
-                        onChange={(e) => setContactEmail(e.target.value)}
-                        placeholder="Your Email"
-                        className="bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all"
+                        rows={3}
+                        value={contactMsg}
+                        onChange={(e) => setContactMsg(e.target.value)}
+                        placeholder="Detail your request, project, or general networking message..."
+                        className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all resize-none"
                       />
                     </div>
-                    <textarea
-                      required
-                      rows={2.5}
-                      value={contactMsg}
-                      onChange={(e) => setContactMsg(e.target.value)}
-                      placeholder="Detail your request or general networking message..."
-                      className="w-full bg-white/[0.02] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-[var(--theme-accent-color)] focus:ring-1 focus:ring-[var(--theme-accent-color)] transition-all resize-none"
-                    />
                     
                     {renderDeliverySettings()}
 

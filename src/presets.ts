@@ -54,7 +54,7 @@ export const AVATAR_PRESETS: AvatarModelPreset[] = [
 ];
 
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
-  name: "Nour Khalaf Abou El Rouss",
+  name: "Nour Abou El Rouss",
   role: "Full-Stack Web Developer",
   tagline: "Crafting pixel-perfect React applications, elegant user interfaces, and secure full-stack database solutions.",
   bio: "I build fast, responsive, and pixel-perfect websites. I specialize in crafting elegant user interfaces with HTML, CSS, JavaScript, and React, combined with secure relational backends using MySQL and Supabase.",
@@ -115,6 +115,18 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
         "JavaScript"
       ],
       demoUrl: "https://www.floraisondelynn.com/"
+    },
+    {
+      id: "proj-1782872638672",
+      title: "ClothStore – Apparel E-commerce",
+      description: "A modern, responsive e-commerce platform for apparel, focused on clean design and efficient product browsing. **Problem:** Needed a streamlined shopping experience that emphasizes visual appeal while maintaining fast performance across devices. **Approach:** Implemented a component-based architecture to manage dynamic product catalogs, integrated responsive grid layouts for seamless mobile and desktop viewing, and ensured optimized asset delivery for high-quality product images. **Impact:** Improved product discovery and user engagement through a intuitive, performance-focused interface.",
+      category: "Online Store",
+      tags: [
+        "React",
+        "CSS3",
+        "JavaScript"
+      ],
+      demoUrl: "https://nourak16.github.io/ClothStore/"
     }
   ],
   socials: {
