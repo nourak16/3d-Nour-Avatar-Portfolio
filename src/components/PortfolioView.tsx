@@ -101,6 +101,162 @@ const parseCaseStudy = (desc: string): CaseStudySections => {
   return sections;
 };
 
+const renderFlowerGraphic = () => (
+  <div className="relative flex flex-col items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+    {/* Elegant soft glowing circular background in rose gold / gold hue */}
+    <div className="absolute inset-0 rounded-full bg-rose-400/5 group-hover:bg-rose-400/10 blur-xl scale-90 group-hover:scale-125 transition-all duration-500" />
+    
+    <svg viewBox="0 0 100 100" className="w-13 h-13 relative z-10 text-rose-300 group-hover:text-amber-200 transition-colors duration-500" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+      {/* Exquisite outer circle ring with aesthetic gap */}
+      <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="0.75" strokeDasharray="180 30" className="opacity-40" />
+      
+      {/* Fine-line luxury rose petals */}
+      <g strokeWidth="1.2" className="transform-gpu origin-center group-hover:rotate-12 transition-transform duration-700">
+        {/* Organic curved stem and leaves representing growth / bloom */}
+        <path d="M50,82 C50,72 49,63 50,55" className="opacity-40" />
+        <path d="M49,68 C42,65 38,60 44,57 C48,59 49,64 49,68 Z" className="opacity-30 fill-rose-300/5" strokeWidth="1" />
+        <path d="M50,62 C57,60 62,55 56,51 C52,53 51,58 50,62 Z" className="opacity-30 fill-rose-300/5" strokeWidth="1" />
+        
+        {/* Elegant flower petals - highly symmetric yet organic luxury blossom */}
+        <path d="M50,55 C43,45 42,32 50,26 C58,32 57,45 50,55 Z" fill="rgba(251, 113, 133, 0.08)" />
+        <path d="M46,48 C34,40 38,26 48,25 Q50,33 46,48" className="opacity-80" />
+        <path d="M54,48 C66,40 62,26 52,25 Q50,33 54,48" className="opacity-80" />
+        
+        <path d="M41,41 C31,31 43,18 48,22" className="opacity-50" />
+        <path d="M59,41 C69,31 57,18 52,22" className="opacity-50" />
+      </g>
+
+      {/* Sparkling aesthetic dots */}
+      <circle cx="28" cy="35" r="1" className="fill-amber-300/60" strokeWidth="0" />
+      <circle cx="72" cy="35" r="1.2" className="fill-amber-300/80 animate-pulse" strokeWidth="0" />
+    </svg>
+    <span className="absolute bottom-1.5 text-[8px] font-serif font-semibold tracking-[0.25em] text-rose-300/60 group-hover:text-amber-200 transition-colors duration-500">
+      FLORAISON
+    </span>
+  </div>
+);
+
+const renderClothGraphic = () => (
+  <div className="relative flex flex-col items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+    {/* Sleek, sophisticated dark teal/emerald backlighting */}
+    <div className="absolute inset-0 rounded-full bg-emerald-500/5 group-hover:bg-emerald-500/10 blur-xl scale-90 group-hover:scale-125 transition-all duration-500" />
+    
+    <svg viewBox="0 0 100 100" className="w-13 h-13 relative z-10 text-emerald-300 group-hover:text-emerald-200 transition-colors duration-500" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+      {/* High-fashion geometric square rotated 45 degrees */}
+      <rect x="20" y="20" width="60" height="60" rx="14" transform="rotate(45 50 50)" stroke="currentColor" strokeWidth="0.75" className="opacity-30" />
+      
+      {/* Clean couture hanger outline */}
+      <g strokeWidth="1.2">
+        {/* Hanger neck curve */}
+        <path d="M50,36 C50,28 56,28 56,32 C56,36 50,38 50,44" strokeWidth="1.6" />
+        {/* Sleek triangle shoulder bar */}
+        <path d="M26,62 L50,44 L74,62 Q50,58 26,62 Z" className="opacity-90" fill="rgba(16, 185, 129, 0.03)" strokeWidth="1.6" />
+        {/* Horizontal bar accent */}
+        <line x1="32" y1="59" x2="68" y2="59" className="opacity-50" strokeWidth="1" />
+        {/* Stylized hanging tie/ribbon for detail */}
+        <path d="M47,47 L53,47 L55,70 L50,74 L45,70 Z" className="opacity-70 fill-emerald-300/10" strokeWidth="1" />
+      </g>
+
+      {/* Decorative vertical lines representing loom / warp threads */}
+      <line x1="16" y1="50" x2="22" y2="50" strokeWidth="1" className="opacity-20" />
+      <line x1="78" y1="50" x2="84" y2="50" strokeWidth="1" className="opacity-20" />
+    </svg>
+    <span className="absolute bottom-1.5 text-[8px] font-sans font-bold tracking-[0.25em] text-emerald-300/60 group-hover:text-emerald-200 transition-colors duration-500 uppercase">
+      CLOTH
+    </span>
+  </div>
+);
+
+const renderTechGraphic = () => (
+  <div className="relative flex items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+    <div className="absolute inset-0 rounded-full bg-indigo-500/10 blur-xl scale-75 group-hover:scale-125 transition-transform duration-500" />
+    <svg viewBox="0 0 100 100" className="w-14 h-14 relative z-10 text-indigo-400" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="1" strokeDasharray="2 10" className="opacity-30" />
+      <g strokeWidth="2.5">
+        <path d="M22,65 Q50,75 78,65 Q50,55 22,65 Z" className="opacity-40" />
+        <path d="M22,65 L22,72 Q50,82 78,72 L78,65" className="opacity-40" />
+        <path d="M22,48 Q50,58 78,48 Q50,38 22,48 Z" className="opacity-70" />
+        <path d="M22,48 L22,55 Q50,65 78,55 L78,48" className="opacity-70" />
+        <path d="M22,31 Q50,41 78,31 Q50,21 22,31 Z" className="fill-white/[0.02]" />
+        <path d="M22,31 L22,38 Q50,48 78,38 L78,31" />
+      </g>
+      <circle cx="50" cy="31" r="3" className="fill-indigo-300 animate-pulse" />
+      <circle cx="34" cy="31" r="2" className="fill-indigo-400" strokeWidth="0" />
+      <circle cx="66" cy="31" r="2" className="fill-indigo-400" strokeWidth="0" />
+    </svg>
+  </div>
+);
+
+const renderChatGraphic = () => (
+  <div className="relative flex items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+    <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-xl scale-75 group-hover:scale-125 transition-transform duration-500" />
+    <svg viewBox="0 0 100 100" className="w-14 h-14 relative z-10 text-cyan-400" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" className="opacity-25" />
+      <path d="M35,55 C35,43 45,35 55,35 C65,35 73,43 73,55 C73,61 69,67 63,70 L65,80 L55,75 C55,75 35,75 35,55 Z" className="opacity-45" fill="rgba(255,255,255,0.02)" />
+      <path d="M65,45 C65,33 55,25 45,25 C35,25 27,33 27,45 C27,51 31,57 37,60 L35,70 L45,65 C45,65 65,65 65,45 Z" />
+      <circle cx="41" cy="45" r="2" className="fill-cyan-400" strokeWidth="0" />
+      <circle cx="49" cy="45" r="2" className="fill-cyan-400" strokeWidth="0" />
+    </svg>
+  </div>
+);
+
+const renderAnalyticsGraphic = () => (
+  <div className="relative flex items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+    <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-xl scale-75 group-hover:scale-125 transition-transform duration-500" />
+    <svg viewBox="0 0 100 100" className="w-14 h-14 relative z-10 text-emerald-400" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="1" strokeDasharray="8 4" className="opacity-30" />
+      <rect x="30" y="55" width="8" height="20" rx="2" className="opacity-40" />
+      <rect x="46" y="40" width="8" height="35" rx="2" className="opacity-70" fill="rgba(255,255,255,0.05)" />
+      <rect x="62" y="25" width="8" height="50" rx="2" />
+      <path d="M20,70 L34,50 L50,45 L66,30 L80,22" stroke="currentColor" strokeWidth="3" className="drop-shadow-[0_2px_4px_rgba(52,211,153,0.5)]" />
+      <circle cx="80" cy="22" r="3" className="fill-emerald-300" strokeWidth="0" />
+    </svg>
+  </div>
+);
+
+const renderFallbackGraphic = (title: string, theme: any) => {
+  const initials = title.split(' ').map((w: string) => w[0]).join('').slice(0, 3).toUpperCase();
+  return (
+    <div className="relative flex items-center justify-center w-20 h-20 group-hover:scale-110 transition-transform duration-500">
+      <div className={`absolute inset-0 rounded-full ${theme.glow} blur-xl opacity-10 scale-75 group-hover:scale-125 transition-transform duration-500`} />
+      <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full text-white/5 group-hover:text-white/10 transition-all duration-700 animate-[spin_25s_linear_infinite]" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="50" cy="50" r="42" strokeDasharray="10 20" />
+      </svg>
+      <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full text-[var(--theme-accent-color,rgb(52,211,153))]/20 group-hover:text-[var(--theme-accent-color,rgb(52,211,153))]/40 transition-all duration-700 animate-[spin_15s_linear_infinite_reverse]" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="50" cy="50" r="35" strokeDasharray="5 15" />
+      </svg>
+      <div className="relative flex items-center justify-center z-10 w-12 h-12 rounded-xl bg-white/[0.02] border border-white/10 group-hover:border-white/25 shadow-lg backdrop-blur-sm transition-all duration-300">
+        <span className="text-xs font-black tracking-widest text-slate-300 group-hover:text-white transition-colors duration-300">
+          {initials}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const renderProjectGraphic = (proj: any, theme: any) => {
+  const title = proj.title || "";
+  const cat = proj.category || "";
+  
+  if (/floraison|flower|floral|lynn/i.test(title) || /flower|floral|lynn/i.test(cat)) {
+    return renderFlowerGraphic();
+  }
+  if (/cloth|apparel|clothing|fashion|retail|store|shoe/i.test(title) || /cloth|apparel|clothing|fashion|retail|store|shoe/i.test(cat)) {
+    return renderClothGraphic();
+  }
+  if (/database|sql|server|backend|api|system|process|cloud|network/i.test(title) || /database|sql|server|backend|api|system|process|cloud|network/i.test(cat)) {
+    return renderTechGraphic();
+  }
+  if (/chat|social|message|messenger|connect|forum|community/i.test(title) || /chat|social|message|messenger|connect|forum|community/i.test(cat)) {
+    return renderChatGraphic();
+  }
+  if (/analytics|dashboard|finance|chart|tracker|budget|stats|calc/i.test(title) || /analytics|dashboard|finance|chart|tracker|budget|stats|calc/i.test(cat)) {
+    return renderAnalyticsGraphic();
+  }
+  
+  return renderFallbackGraphic(title, theme);
+};
+
 interface ProjectCaseStudyProps {
   description: string;
   compact?: boolean;
@@ -696,10 +852,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 <div className="w-2" />
                               </div>
                               <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
-                                <div className={`absolute w-12 h-12 rounded-full ${theme.glow} blur-lg opacity-10`} />
-                                <span className="text-[10px] font-extrabold tracking-[0.2em] text-slate-400 font-sans uppercase">
-                                  {proj.title.split(' ').map((w: string) => w[0]).join('').slice(0, 3)}
-                                </span>
+                                {renderProjectGraphic(proj, theme)}
                               </div>
                             </div>
                           )}
@@ -1094,10 +1247,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 <div className="w-2" />
                               </div>
                               <div className="flex-1 flex flex-col items-center justify-center relative mt-1.5">
-                                <div className={`absolute w-12 h-12 rounded-full ${theme.glow} blur-lg opacity-10`} />
-                                <span className="text-[10px] font-extrabold tracking-[0.2em] text-slate-400 font-sans uppercase">
-                                  {proj.title.split(' ').map((w: string) => w[0]).join('').slice(0, 3)}
-                                </span>
+                                {renderProjectGraphic(proj, theme)}
                               </div>
                             </div>
                           )}
