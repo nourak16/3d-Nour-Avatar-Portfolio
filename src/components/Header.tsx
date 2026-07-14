@@ -97,14 +97,60 @@ export function Header({ layoutStyle, name, activeSection, onNavigate, socials }
         <a 
           href={`#${layoutStyle}-home`}
           onClick={(e) => handleLinkClick(e, 'home')}
-          className="flex items-center gap-2.5 group cursor-pointer"
+          className="flex items-center gap-3 group cursor-pointer"
         >
-          <span className="text-xl font-black tracking-tighter text-white group-hover:text-[var(--theme-accent-color,rgb(52,211,153))] transition-colors duration-300">
-            NAER
-          </span>
-          <span className="hidden xs:inline-block text-[10px] font-mono font-bold uppercase tracking-widest bg-white/5 text-[var(--theme-accent-color)] border border-white/10 px-2 py-0.5 rounded">
-            DEV
-          </span>
+          <div className="relative flex items-center justify-center w-9 h-9">
+            {/* Ambient logo background glow */}
+            <div className="absolute inset-0 bg-[var(--theme-accent-color,rgb(52,211,153))]/20 rounded-xl blur-md scale-75 group-hover:scale-110 group-hover:bg-[var(--theme-accent-color,rgb(52,211,153))]/30 transition-all duration-300" />
+            
+            {/* Outer Hexagonal Shield */}
+            <svg 
+              viewBox="0 0 100 100" 
+              className="absolute inset-0 w-full h-full text-white/10 group-hover:text-white/20 transition-all duration-500 group-hover:rotate-12 transform-gpu"
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="4"
+            >
+              <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="rgba(24, 30, 28, 0.6)" className="backdrop-blur-sm" />
+            </svg>
+
+            {/* Glowing Accent Hexagon outline */}
+            <svg 
+              viewBox="0 0 100 100" 
+              className="absolute inset-0 w-full h-full text-[var(--theme-accent-color,rgb(52,211,153))] opacity-60 group-hover:opacity-100 transition-all duration-500 transform-gpu group-hover:-rotate-12"
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="5"
+              strokeDasharray="15 85"
+              strokeDashoffset="0"
+            >
+              <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" />
+            </svg>
+
+            {/* Interactive Coding Mark inside */}
+            <svg 
+              viewBox="0 0 100 100" 
+              className="w-5 h-5 z-10 text-[var(--theme-accent-color,rgb(52,211,153))] group-hover:text-white transition-colors duration-300"
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="8.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <polyline points="30,35 12,50 30,65" />
+              <polyline points="70,35 88,50 70,65" />
+              <line x1="58" y1="20" x2="42" y2="80" />
+            </svg>
+          </div>
+
+          <div className="flex flex-col -space-y-1">
+            <span className="text-lg font-black tracking-wider text-white group-hover:text-[var(--theme-accent-color,rgb(52,211,153))] transition-colors duration-300 font-sans">
+              NAER
+            </span>
+            <span className="text-[8px] font-mono font-bold uppercase tracking-[0.25em] text-white/50 group-hover:text-[var(--theme-accent-color)] transition-colors duration-300">
+              CODING
+            </span>
+          </div>
         </a>
 
         {/* Desktop Links */}
