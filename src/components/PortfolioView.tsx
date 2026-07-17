@@ -26,7 +26,8 @@ import {
   Cpu,
   TrendingUp,
   ArrowUpRight,
-  ArrowRight
+  ArrowRight,
+  MessageCircle
 } from 'lucide-react';
 
 interface PortfolioViewProps {
@@ -702,30 +703,33 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
               {/* Social row */}
               <div className="flex flex-wrap gap-3 pt-2">
-                {data.socials.linkedin && (
+                {data.socials.instagram && (
                   <a
-                    href={data.socials.linkedin}
+                    href={data.socials.instagram}
                     target="_blank"
                     rel="noreferrer"
                     className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    title="Instagram"
                   >
-                    <Linkedin size={18} />
+                    <Instagram size={18} />
                   </a>
                 )}
-                {data.socials.twitter && (
+                {data.socials.whatsapp && (
                   <a
-                    href={data.socials.twitter}
+                    href={data.socials.whatsapp}
                     target="_blank"
                     rel="noreferrer"
                     className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    title="WhatsApp"
                   >
-                    <Twitter size={18} />
+                    <MessageCircle size={18} />
                   </a>
                 )}
                 {data.socials.email && (
                   <a
                     href={`mailto:${data.socials.email}`}
                     className="p-2.5 rounded-lg bg-transparent border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all hover:scale-105"
+                    title="Email"
                   >
                     <Mail size={18} />
                   </a>
@@ -824,14 +828,15 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   {(proj: any) => {
                     const sections = parseCaseStudy(proj.description);
                     const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                    const displayImage = proj.image || (proj.demoUrl ? `https://api.microlink.io/?url=${encodeURIComponent(proj.demoUrl)}&screenshot=true&embed=screenshot.url` : undefined);
                     return (
                       <div className="flex flex-col h-full flex-grow">
                         {/* Thumbnail Container */}
                         <div className="h-44 w-full relative overflow-hidden bg-slate-800/40 border-b border-white/5 flex items-center justify-center">
-                          {proj.image ? (
+                          {displayImage ? (
                             <div className="w-full h-full relative overflow-hidden">
                               <img 
-                                src={proj.image} 
+                                src={displayImage} 
                                 alt={proj.title} 
                                 referrerPolicy="no-referrer" 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
@@ -869,7 +874,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 </span>
                               </div>
                               <div className="flex flex-wrap gap-1">
-                                {proj.tags.slice(0, 2).map((t: string) => (
+                                {proj.tags.map((t: string) => (
                                   <span key={t} className="text-[8px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.05]">
                                     {t}
                                   </span>
@@ -1010,17 +1015,6 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  {data.socials.linkedin && (
-                    <a
-                      href={data.socials.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="LinkedIn"
-                    >
-                      <Linkedin size={16} />
-                    </a>
-                  )}
                   {data.socials.instagram && (
                     <a
                       href={data.socials.instagram}
@@ -1032,26 +1026,15 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       <Instagram size={16} />
                     </a>
                   )}
-                  {data.socials.github && (
+                  {data.socials.whatsapp && (
                     <a
-                      href={data.socials.github}
+                      href={data.socials.whatsapp}
                       target="_blank"
                       rel="noreferrer"
                       className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="GitHub"
+                      title="WhatsApp"
                     >
-                      <Github size={16} />
-                    </a>
-                  )}
-                  {data.socials.twitter && (
-                    <a
-                      href={data.socials.twitter}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="Twitter"
-                    >
-                      <Twitter size={16} />
+                      <MessageCircle size={16} />
                     </a>
                   )}
                   {data.socials.email && (
@@ -1142,7 +1125,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
         </motion.section>
 
         {/* Outer contents */}
-        <div className="bg-transparent border-t border-white/5 py-20 w-full" id="classic-scrolling-content-wrapper">
+        <div className="bg-transparent border-t border-white/5 pt-20 pb-4 w-full" id="classic-scrolling-content-wrapper">
           <div className="max-w-7xl mx-auto px-6 space-y-24">
             
             {/* About Section */}
@@ -1219,14 +1202,15 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                   {(proj: any) => {
                     const sections = parseCaseStudy(proj.description);
                     const shortBrief = sections.summary || proj.description.split('**')[0].trim() || proj.description;
+                    const displayImage = proj.image || (proj.demoUrl ? `https://api.microlink.io/?url=${encodeURIComponent(proj.demoUrl)}&screenshot=true&embed=screenshot.url` : undefined);
                     return (
                       <div className="flex flex-col h-full flex-grow">
                         {/* Thumbnail Container */}
                         <div className="h-44 w-full relative overflow-hidden bg-slate-800/40 border-b border-white/5 flex items-center justify-center">
-                          {proj.image ? (
+                          {displayImage ? (
                             <div className="w-full h-full relative overflow-hidden">
                               <img 
-                                src={proj.image} 
+                                src={displayImage} 
                                 alt={proj.title} 
                                 referrerPolicy="no-referrer" 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" 
@@ -1264,7 +1248,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                                 </span>
                               </div>
                               <div className="flex flex-wrap gap-1">
-                                {proj.tags.slice(0, 2).map((t: string) => (
+                                {proj.tags.map((t: string) => (
                                   <span key={t} className="text-[8px] font-mono text-slate-300 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.05]">
                                     {t}
                                   </span>
@@ -1394,7 +1378,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
               </div>
             </motion.section>
             
-            <footer className="w-full border-t border-white/5 pt-12 pb-16 mt-20" id="portfolio-classic-footer">
+            <footer className="w-full border-t border-white/5 pt-12 pb-2 mt-20" id="portfolio-classic-footer">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1">
                   <span className="text-sm font-bold text-white tracking-tight">{data.name}</span>
@@ -1402,17 +1386,6 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  {data.socials.linkedin && (
-                    <a
-                      href={data.socials.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="LinkedIn"
-                    >
-                      <Linkedin size={16} />
-                    </a>
-                  )}
                   {data.socials.instagram && (
                     <a
                       href={data.socials.instagram}
@@ -1424,26 +1397,15 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                       <Instagram size={16} />
                     </a>
                   )}
-                  {data.socials.github && (
+                  {data.socials.whatsapp && (
                     <a
-                      href={data.socials.github}
+                      href={data.socials.whatsapp}
                       target="_blank"
                       rel="noreferrer"
                       className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="GitHub"
+                      title="WhatsApp"
                     >
-                      <Github size={16} />
-                    </a>
-                  )}
-                  {data.socials.twitter && (
-                    <a
-                      href={data.socials.twitter}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-slate-400 hover:text-[var(--theme-accent-color)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="Twitter"
-                    >
-                      <Twitter size={16} />
+                      <MessageCircle size={16} />
                     </a>
                   )}
                   {data.socials.email && (
@@ -1458,7 +1420,7 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
+              <div className="flex flex-col sm:flex-row items-center justify-center mt-4 pt-4 border-t border-white/[0.02] text-slate-500 text-[10px] sm:text-xs tracking-wide gap-3">
                 <span>© 2026 Nour Abou El Rouss. All rights reserved.</span>
               </div>
             </footer>
@@ -1518,24 +1480,14 @@ export default function PortfolioView({ data, canvasElement }: PortfolioViewProp
 
                 {/* Social icons inside HUD */}
                 <div className="flex gap-2.5 pt-1.5 border-t border-slate-900/60">
-                  {data.socials.linkedin && (
-                    <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="LinkedIn">
-                      <Linkedin size={15} />
-                    </a>
-                  )}
                   {data.socials.instagram && (
                     <a href={data.socials.instagram} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="Instagram">
                       <Instagram size={15} />
                     </a>
                   )}
-                  {data.socials.github && (
-                    <a href={data.socials.github} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="GitHub">
-                      <Github size={15} />
-                    </a>
-                  )}
-                  {data.socials.twitter && (
-                    <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="Twitter">
-                      <Twitter size={15} />
+                  {data.socials.whatsapp && (
+                    <a href={data.socials.whatsapp} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors" title="WhatsApp">
+                      <MessageCircle size={15} />
                     </a>
                   )}
                   {data.socials.email && (

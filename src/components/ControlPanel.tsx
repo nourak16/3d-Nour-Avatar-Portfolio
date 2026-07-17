@@ -21,7 +21,11 @@ import {
   Keyboard,
   Mouse,
   RotateCcw,
-  Armchair
+  Armchair,
+  Edit2,
+  X,
+  Image,
+  RefreshCw
 } from 'lucide-react';
 
 interface ControlPanelProps {
@@ -50,6 +54,10 @@ export default function ControlPanel({
   const [newProjTags, setNewProjTags] = useState('');
   const [newProjDemo, setNewProjDemo] = useState('');
   const [newProjGithub, setNewProjGithub] = useState('');
+  const [newProjImage, setNewProjImage] = useState('');
+  const [imageType, setImageType] = useState<'auto' | 'custom' | 'upload'>('auto');
+  const [editingProjId, setEditingProjId] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
 
   // Update specific fields helpers
   const updateAvatarConfig = (fields: Partial<PortfolioData['avatarConfig']>) => {
@@ -152,34 +160,142 @@ export default function ControlPanel({
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
-    const newProj: Project = {
-      id: `proj-${Date.now()}`,
-      title: newProjTitle.trim(),
-      description: newProjDesc.trim(),
-      category: newProjCategory.trim() || 'General',
-      tags: tagsArr.length > 0 ? tagsArr : ['Development'],
-      demoUrl: newProjDemo.trim() || undefined,
-      githubUrl: newProjGithub.trim() || undefined,
-    };
+    let finalImage = newProjImage.trim() || undefined;
+    if (imageType === 'auto' && newProjDemo.trim()) {
+      finalImage = `https://api.microlink.io/?url=${encodeURIComponent(newProjDemo.trim())}&screenshot=true&embed=screenshot.url`;
+    } else if (imageType === 'auto') {
+      finalImage = undefined;
+    }
 
-    onChange({
-      ...data,
-      projects: [...data.projects, newProj],
-    });
+    if (editingProjId) {
+      // Edit existing project
+      const updatedProjects = data.projects.map((p) => {
+        if (p.id === editingProjId) {
+          return {
+            ...p,
+            title: newProjTitle.trim(),
+            description: newProjDesc.trim(),
+            category: newProjCategory.trim() || 'General',
+            tags: tagsArr.length > 0 ? tagsArr : ['Development'],
+            demoUrl: newProjDemo.trim() || undefined,
+            githubUrl: newProjGithub.trim() || undefined,
+            image: finalImage,
+          };
+        }
+        return p;
+      });
 
+      onChange({
+        ...data,
+        projects: updatedProjects,
+      });
+
+      setEditingProjId(null);
+    } else {
+      // Add new project
+      const newProj: Project = {
+        id: `proj-${Date.now()}`,
+        title: newProjTitle.trim(),
+        description: newProjDesc.trim(),
+        category: newProjCategory.trim() || 'General',
+        tags: tagsArr.length > 0 ? tagsArr : ['Development'],
+        demoUrl: newProjDemo.trim() || undefined,
+        githubUrl: newProjGithub.trim() || undefined,
+        image: finalImage,
+      };
+
+      onChange({
+        ...data,
+        projects: [...data.projects, newProj],
+      });
+    }
+
+    // Reset fields
     setNewProjTitle('');
     setNewProjDesc('');
     setNewProjCategory('');
     setNewProjTags('');
     setNewProjDemo('');
     setNewProjGithub('');
+    setNewProjImage('');
+    setImageType('auto');
+  };
+
+  const handleStartEditProject = (proj: Project) => {
+    setEditingProjId(proj.id);
+    setNewProjTitle(proj.title);
+    setNewProjDesc(proj.description);
+    setNewProjCategory(proj.category);
+    setNewProjTags(proj.tags.join(', '));
+    setNewProjDemo(proj.demoUrl || '');
+    setNewProjGithub(proj.githubUrl || '');
+    setNewProjImage(proj.image || '');
+    
+    if (proj.image && proj.image.includes('microlink.io')) {
+      setImageType('auto');
+    } else if (proj.image && proj.image.startsWith('data:image/')) {
+      setImageType('upload');
+    } else if (proj.image) {
+      setImageType('custom');
+    } else {
+      setImageType('auto');
+    }
+  };
+
+  const handleCancelEditProject = () => {
+    setEditingProjId(null);
+    setNewProjTitle('');
+    setNewProjDesc('');
+    setNewProjCategory('');
+    setNewProjTags('');
+    setNewProjDemo('');
+    setNewProjGithub('');
+    setNewProjImage('');
+    setImageType('auto');
   };
 
   const handleRemoveProject = (id: string) => {
+    if (editingProjId === id) {
+      handleCancelEditProject();
+    }
     onChange({
       ...data,
       projects: data.projects.filter((p) => p.id !== id),
     });
+  };
+
+  const handleProjFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewProjImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleProjDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleProjDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewProjImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const themeColors = [
@@ -832,28 +948,6 @@ export default function ControlPanel({
                   
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label htmlFor="input-social-github" className="text-[10px] text-slate-400">GitHub Link</label>
-                      <input
-                        id="input-social-github"
-                        type="url"
-                        value={data.socials.github || ''}
-                        onChange={(e) => updateSocialFields({ github: e.target.value })}
-                        placeholder="https://github.com"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label htmlFor="input-social-linkedin" className="text-[10px] text-slate-400">LinkedIn Link</label>
-                      <input
-                        id="input-social-linkedin"
-                        type="url"
-                        value={data.socials.linkedin || ''}
-                        onChange={(e) => updateSocialFields({ linkedin: e.target.value })}
-                        placeholder="https://linkedin.com"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
                       <label htmlFor="input-social-instagram" className="text-[10px] text-slate-400">Instagram Link</label>
                       <input
                         id="input-social-instagram"
@@ -865,17 +959,17 @@ export default function ControlPanel({
                       />
                     </div>
                     <div className="space-y-1">
-                      <label htmlFor="input-social-twitter" className="text-[10px] text-slate-400">Twitter X Link</label>
+                      <label htmlFor="input-social-whatsapp" className="text-[10px] text-slate-400">WhatsApp Link / Number</label>
                       <input
-                        id="input-social-twitter"
+                        id="input-social-whatsapp"
                         type="url"
-                        value={data.socials.twitter || ''}
-                        onChange={(e) => updateSocialFields({ twitter: e.target.value })}
-                        placeholder="https://x.com"
+                        value={data.socials.whatsapp || ''}
+                        onChange={(e) => updateSocialFields({ whatsapp: e.target.value })}
+                        placeholder="https://wa.me/1234567890"
                         className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
                       />
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 col-span-2">
                       <label htmlFor="input-social-email" className="text-[10px] text-slate-400">Email Address</label>
                       <input
                         id="input-social-email"
@@ -1001,7 +1095,9 @@ export default function ControlPanel({
               <div className="space-y-4" id="subtab-projects-manager">
                 {/* Add project form */}
                 <div className="bg-slate-950/40 p-3.5 rounded-xl border border-slate-800/80 space-y-3">
-                  <h4 className="text-xs font-bold text-slate-300">Add Portfolio Project</h4>
+                  <h4 className="text-xs font-bold text-slate-300">
+                    {editingProjId ? 'Edit Portfolio Project' : 'Add Portfolio Project'}
+                  </h4>
                   
                   <div className="space-y-1.5">
                     <label htmlFor="input-project-title" className="text-[10px] text-slate-400">Project Title</label>
@@ -1077,15 +1173,158 @@ export default function ControlPanel({
                     </div>
                   </div>
 
-                  <button
-                    onClick={handleAddProject}
-                    disabled={!newProjTitle.trim() || !newProjDesc.trim()}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer"
-                    id="btn-add-project"
-                  >
-                    <Plus size={13} />
-                    Insert Project Card
-                  </button>
+                  {/* Screenshot Manager */}
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] text-slate-400 block font-medium">Project Card Screenshot</span>
+                    <div className="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setImageType('auto')}
+                        className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded text-[9px] font-semibold transition-all cursor-pointer ${
+                          imageType === 'auto'
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <RefreshCw size={11} className={imageType === 'auto' ? 'animate-spin-slow' : ''} />
+                        Auto Screenshot
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImageType('custom')}
+                        className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded text-[9px] font-semibold transition-all cursor-pointer ${
+                          imageType === 'custom'
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <Link size={11} />
+                        Custom URL
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImageType('upload');
+                        }}
+                        className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded text-[9px] font-semibold transition-all cursor-pointer ${
+                          imageType === 'upload'
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <Upload size={11} />
+                        Upload Image
+                      </button>
+                    </div>
+
+                    {/* Mode Specific Inputs */}
+                    {imageType === 'auto' && (
+                      <div className="bg-slate-900/60 p-2 rounded-lg border border-slate-800/50 text-[10px] text-slate-400 space-y-1">
+                        <p className="flex items-start gap-1 font-sans">
+                          <Info size={11} className="text-emerald-400 mt-0.5 shrink-0" />
+                          <span>
+                            {newProjDemo.trim() ? (
+                              <span>Will auto-capture live screenshot of <code className="text-slate-200 font-mono text-[9px]">{newProjDemo.trim()}</code>.</span>
+                            ) : (
+                              <span className="text-amber-400 font-medium">Please enter a Live Demo URL above to automatically generate its website screenshot.</span>
+                            )}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+
+                    {imageType === 'custom' && (
+                      <div className="space-y-1">
+                        <input
+                          type="url"
+                          value={newProjImage}
+                          onChange={(e) => setNewProjImage(e.target.value)}
+                          placeholder="https://images.unsplash.com/photo-..."
+                          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono text-[10px]"
+                        />
+                        <span className="text-[9px] text-slate-500 block">Provide any direct image URL (JPEG, PNG, SVG) for your project card thumbnail.</span>
+                      </div>
+                    )}
+
+                    {imageType === 'upload' && (
+                      <div className="space-y-2">
+                        {/* Drag and Drop Zone */}
+                        <div
+                          onDragEnter={handleProjDrag}
+                          onDragOver={handleProjDrag}
+                          onDragLeave={handleProjDrag}
+                          onDrop={handleProjDrop}
+                          className={`border border-dashed rounded-lg p-3 text-center transition-all relative ${
+                            dragActive
+                              ? 'border-emerald-400 bg-emerald-500/10'
+                              : 'border-slate-800 bg-slate-900/40 hover:bg-slate-900/60'
+                          }`}
+                        >
+                          <input
+                            type="file"
+                            id="proj-image-uploader"
+                            accept="image/*"
+                            onChange={handleProjFileChange}
+                            className="hidden"
+                          />
+                          <label
+                            htmlFor="proj-image-uploader"
+                            className="cursor-pointer flex flex-col items-center justify-center gap-1"
+                          >
+                            <Upload size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-medium text-slate-300">
+                              Drag & drop here or <span className="text-emerald-400 underline">browse</span>
+                            </span>
+                            <span className="text-[8px] text-slate-500 font-sans">Supports PNG, JPEG, SVG up to 2MB</span>
+                          </label>
+                        </div>
+
+                        {/* Upload Preview */}
+                        {newProjImage && (
+                          <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-lg border border-slate-800">
+                            <img
+                              src={newProjImage}
+                              alt="Upload preview"
+                              className="w-12 h-8 rounded object-cover border border-slate-700 shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <span className="text-[9px] font-medium text-slate-300 block truncate">Selected Screenshot File</span>
+                              <span className="text-[8px] text-slate-500 font-mono">Base64 Encoded Image</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setNewProjImage('')}
+                              className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 cursor-pointer"
+                              title="Clear Uploaded Image"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 pt-1">
+                    {editingProjId && (
+                      <button
+                        onClick={handleCancelEditProject}
+                        className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer border border-slate-700"
+                      >
+                        <X size={13} />
+                        Cancel
+                      </button>
+                    )}
+                    <button
+                      onClick={handleAddProject}
+                      disabled={!newProjTitle.trim() || !newProjDesc.trim()}
+                      className="flex-[2] bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      id="btn-add-project"
+                    >
+                      {editingProjId ? <Edit2 size={13} /> : <Plus size={13} />}
+                      {editingProjId ? 'Update Project Card' : 'Insert Project Card'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* List projects */}
@@ -1101,6 +1340,14 @@ export default function ControlPanel({
                           key={proj.id}
                           className="bg-slate-950/20 hover:bg-slate-950/40 p-3 rounded-lg border border-slate-800/60 transition-colors group flex items-start gap-3"
                         >
+                          {proj.image && (
+                            <img
+                              src={proj.image}
+                              alt=""
+                              referrerPolicy="no-referrer"
+                              className="w-10 h-7 rounded object-cover border border-slate-800 shrink-0 mt-0.5"
+                            />
+                          )}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <h5 className="text-xs font-bold text-slate-200 truncate">{proj.title}</h5>
@@ -1119,13 +1366,22 @@ export default function ControlPanel({
                               </div>
                             )}
                           </div>
-                          <button
-                            onClick={() => handleRemoveProject(proj.id)}
-                            className="text-slate-500 hover:text-rose-400 p-1 rounded-md hover:bg-rose-500/10 transition-all cursor-pointer shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 mt-0.5"
-                            title="Remove Project"
-                          >
-                            <Trash2 size={13} />
-                          </button>
+                          <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-all mt-0.5">
+                            <button
+                              onClick={() => handleStartEditProject(proj)}
+                              className="text-slate-500 hover:text-emerald-400 p-1 rounded-md hover:bg-emerald-500/10 transition-all cursor-pointer"
+                              title="Edit Project"
+                            >
+                              <Edit2 size={12} />
+                            </button>
+                            <button
+                              onClick={() => handleRemoveProject(proj.id)}
+                              className="text-slate-500 hover:text-rose-400 p-1 rounded-md hover:bg-rose-500/10 transition-all cursor-pointer"
+                              title="Remove Project"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>

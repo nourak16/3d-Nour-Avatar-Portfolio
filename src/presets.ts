@@ -110,11 +110,12 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       description: "A premium, fully responsive floral e-commerce platform designed from scratch. **Problem:** Legacy templates caused high initial page load times and sluggish mobile navigation, leading to early drop-offs. **Approach:** Built custom layout structures using vanilla web standards to bypass third-party library weight, and developed an intuitive navigation drawer with CSS-hardware accelerated triggers. **Impact:** Reduced initial paint load time to under 1.2 seconds, boosting retention and smoothing out the multi-stage checkout experience.",
       category: "Online Store",
       tags: [
-        "HTML5",
-        "CSS3",
+        "HTML",
+        "CSS",
         "JavaScript"
       ],
-      demoUrl: "https://www.floraisondelynn.com/"
+      demoUrl: "https://www.floraisondelynn.com/",
+      image: "https://api.microlink.io/?url=https%3A%2F%2Fwww.floraisondelynn.com%2F&screenshot=true&embed=screenshot.url"
     },
     {
       id: "proj-1782872638672",
@@ -122,19 +123,19 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       description: "A modern, responsive e-commerce platform for apparel, focused on clean design and efficient product browsing. **Problem:** Needed a streamlined shopping experience that emphasizes visual appeal while maintaining fast performance across devices. **Approach:** Implemented a component-based architecture to manage dynamic product catalogs, integrated responsive grid layouts for seamless mobile and desktop viewing, and ensured optimized asset delivery for high-quality product images. **Impact:** Improved product discovery and user engagement through a intuitive, performance-focused interface.",
       category: "Online Store",
       tags: [
-        "React",
-        "CSS3",
-        "JavaScript"
+        "HTML",
+        "CSS",
+        "TypeScript",
+        "Supabase"
       ],
-      demoUrl: "https://nourak16.github.io/ClothStore/"
+      demoUrl: "https://nourak16.github.io/ClothStore/",
+      image: "https://api.microlink.io/?url=https%3A%2F%2Fnourak16.github.io%2FClothStore%2F&screenshot=true&embed=screenshot.url"
     }
   ],
   socials: {
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    instagram: "https://instagram.com",
-    twitter: "https://twitter.com",
-    email: "nourdika098@gmail.com"
+    instagram: "https://www.instagram.com/naer.dev?igsh=MXBoM21naGx1MGlzZQ==",
+    whatsapp: "https://wa.me/+201143566803",
+    email: "nourabouelrouss@gmail.com"
   },
   themeColor: "emerald",
   layoutStyle: "classic",
